@@ -4,7 +4,9 @@ Title: Synthetic Causal Inference
 Version: 0.1.0
 Author: Denis Agniel
 Maintainer: Denis Agniel <dagniel@rand.org>
-Description: Creating robust causal effect estimators for the average treatment effect by minimizing the mean squared error of a convex comination of many estimators of the ATE.
+Description: Creating robust causal effect estimators for the average treatment 
+        effect by minimizing the mean squared error of a convex comination of 
+        many estimators of the ATE.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
