@@ -1,6 +1,8 @@
-combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL, print = FALSE, exclude_t0 = FALSE, ...) {
+combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL, print = FALSE, exclude_t0 = FALSE, bias_type = 'raw_diff', ate_0 = NULL, ...) {
   # browser()
-  if (is.null(boot_ests) & is.null(cov)) stop("Must enter either resampled estimates or covariance estimate.")
+  if (is.null(boot_ests) & is.null(cov)) {
+    stop("Must enter either resampled estimates or covariance estimate.")
+  }
   if (!is.null(boot_ests)) {
     boot_ests[boot_ests == Inf] <- NA
     boot_ests[boot_ests == -Inf] <- NA
@@ -8,6 +10,7 @@ combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL
     rm_b <- boot_ests[,use_i]
 
     C <- cov(rm_b, use = 'pairwise')
+    mean_boot_ests <- apply(rm_b, 2, function(x) mean(x, na.rm = TRUE))
   }
   if (!is.null(cov)) {
     use_i <- as.vector(!is.na(ests) & colMeans(is.na(cov)) < 1)
@@ -18,20 +21,26 @@ combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL
   if (!matrixcalc::is.positive.definite(round(C, 10))) {
     C <- Matrix::nearPD(C)$mat %>% as.matrix
   }
+  
 
   rm_ests <- ests[,use_i]
   n_ests <- length(rm_ests)
 
   est_names <- colnames(rm_ests)
   if (is.null(name_0)) {
-    synths <- lapply(est_names, function(n) do_combination(ests = rm_ests, name_0 = n, C = C, exclude_t0 = exclude_t0))
+    synths <- lapply(est_names, function(n) {
+      do_combination(ests = rm_ests, name_0 = n, C = C, 
+                     exclude_t0 = exclude_t0, bias_type = bias_type,
+                     boot_mean = mean_boot_ests,
+                     ate_0 = ate_0)
+      })
     synth_ates <- map(synths, 'synthetic_ate') %>% unlist
     shrunk_ates <- map(synths, 'shrunk_ate') %>% unlist
     synth_mse <- map(synths, 'naive_mse') %>% unlist
     shrunk_mse <- map(synths, 'shrunk_mse') %>% unlist
     synth_mse2 <- map(synths, 'naive_mse2') %>% unlist
     shrunk_mse2 <- map(synths, 'shrunk_mse2') %>% unlist
-    thr_var <- map(synths, 'th_var') %>% unlist
+    # thr_var <- map(synths, 'th_var') %>% unlist
 
     synth_b <- map(synths, 'b') %>% simplify
     shrunk_b <- map(synths, 'b_shrink') %>% simplify
@@ -44,7 +53,7 @@ combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL
           theta_0 = est_names,
           synthetic = TRUE,
           var = synth_mse,
-          thr_var = thr_var,
+          # thr_var = thr_var,
           # var2 = synth_mse2,
           shrunk = FALSE
         ),
@@ -85,7 +94,10 @@ combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL
       )
     )
   } else {
-    comb <- do_combination(ests = rm_ests, name_0 = name_0, C = C, exclude_t0 = exclude_t0)
+    comb <- do_combination(ests = rm_ests, name_0 = name_0, C = C, 
+                           exclude_t0 = exclude_t0, bias_type = bias_type,
+                           boot_mean = mean_boot_ests,
+                           ate_0 = ate_0)
     synth_ates <- comb$synthetic_ate
     shrunk_ates <- comb$shrunk_ate
     synth_mse <- comb$naive_mse
@@ -112,7 +124,7 @@ combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL
           theta_0 = name_0,
           synthetic = TRUE,
           var = shrunk_mse,
-          thr_var = thr_var,
+          # thr_var = thr_var,
           # var2 = shrunk_mse2,
           shrunk = TRUE
         )
@@ -185,7 +197,7 @@ combine_estimators_linear <- function(data, fn_0, other_fns, print = FALSE, ...)
        b = b_convex)
 }
 
-do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, is_cv = FALSE) {
+do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, is_cv = FALSE, bias_type = 'raw_diff', boot_mean = NULL, ate_0 = NULL) {
 # browser()
   est_0 <- ests %>% select_(name_0) %>% unlist
   i_0 <- which(colnames(ests) == name_0)
@@ -201,9 +213,24 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
   }
   n_ests <- length(ests)
 
-  #-------------------------
-  # raw differences
-  B <- unlist(ests) - unlist(est_0)
+  if (bias_type == 'raw_diff') {
+    #-------------------------
+    # raw differences
+    if (is.null(ate_0)) {
+      B <- unlist(ests) - unlist(est_0)
+    } else B <- unlist(ests) - ate_0
+    
+  } else if (bias_type == 'bootstrap') {
+    if (is.null(boot_mean)) stop('Need bootstrap samples to compute bootstrap bias type.')
+    
+    if (is.null(ate_0)) {
+      B <- boot_mean - ate_0
+    } else B <- boot_mean - ate_0
+  } else if (bias_type == 'bootstrap_all') {
+    if (is.null(boot_mean)) stop('Need bootstrap samples to compute bootstrap bias type.')
+    B <- boot_mean - boot_mean[i_0]
+  }
+  
   qq <- C + B %*% t(B)
   qq_adj <- qq/norm(qq, '2')
   convex_soln <- qp(qq_adj, n_ests)
