@@ -62,6 +62,6 @@ resample_fn <- function(dat, predfn, B) {
                                                                  outcome_fm),
                                      outcome_fam = outcome_fam)
   }
-  return(list(theta_boot, theta_adj, theta_bing))
+  return(map(list(theta_boot, theta_adj, theta_bing), bind_rows))
 }
 
