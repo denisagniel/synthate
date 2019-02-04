@@ -224,7 +224,7 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
     if (is.null(boot_mean)) stop('Need bootstrap samples to compute bootstrap bias type.')
     
     if (is.null(ate_0)) {
-      B <- boot_mean - ate_0
+      B <- boot_mean - unlist(est_0)
     } else B <- boot_mean - ate_0
   } else if (bias_type == 'bootstrap_all') {
     if (is.null(boot_mean)) stop('Need bootstrap samples to compute bootstrap bias type.')
