@@ -15,7 +15,11 @@ resample_joint_distn <- function(dat, predfn) {
   new_dat
 }
 
-resample_fn <- function(dat, predfn, B) {
+resample_fn <- function(dat, predfn, B,
+                        outcome_fm,
+                        ps_fm,
+                        ps_fam,
+                        outcome_fam) {
   theta_bing <- theta_adj <- theta_boot <- list()
   for (b in 1:B) {
     resample_data <- resample_joint_distn(dat, predfn)
