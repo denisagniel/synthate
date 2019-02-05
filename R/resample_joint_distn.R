@@ -16,6 +16,7 @@ resample_joint_distn <- function(dat, predfn) {
 }
 
 resample_fn <- function(dat, predfn, B,
+                        ate_list,
                         outcome_fm,
                         ps_fm,
                         ps_fam,
