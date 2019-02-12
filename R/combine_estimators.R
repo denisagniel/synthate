@@ -197,7 +197,7 @@ combine_estimators_linear <- function(data, fn_0, other_fns, print = FALSE, ...)
        b = b_convex)
 }
 
-do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, is_cv = FALSE, bias_type = 'raw_diff', boot_mean = NULL, ate_0 = NULL) {
+do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, is_cv = FALSE, bias_type = 'raw_diff', boot_mean = NULL, ate_0 = NULL, n = NULL) {
 # browser()
   est_0 <- ests %>% select_(name_0) %>% unlist
   i_0 <- which(colnames(ests) == name_0)
@@ -229,6 +229,13 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
   } else if (bias_type == 'bootstrap_all') {
     if (is.null(boot_mean)) stop('Need bootstrap samples to compute bootstrap bias type.')
     B <- boot_mean - boot_mean[i_0]
+  } else if (bias_type == 'none') {
+    B <- 0
+  } else if (bias_type == 'shrunk') {
+    if (is.null(n)) stop('n must be provided for shrunk bias.')
+    if (is.null(ate_0)) {
+      B <- (unlist(ests) - unlist(est_0))/n
+    } else B <- (unlist(ests) - ate_0)/n
   }
   
   qq <- C + B %*% t(B)
