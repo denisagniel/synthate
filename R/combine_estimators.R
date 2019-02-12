@@ -1,4 +1,4 @@
-combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL, print = FALSE, exclude_t0 = FALSE, bias_type = 'raw_diff', ate_0 = NULL, ...) {
+combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL, print = FALSE, exclude_t0 = FALSE, bias_type = 'raw_diff', ate_0 = NULL, n = NULL,...) {
   # browser()
   if (is.null(boot_ests) & is.null(cov)) {
     stop("Must enter either resampled estimates or covariance estimate.")
@@ -32,7 +32,8 @@ combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL
       do_combination(ests = rm_ests, name_0 = n, C = C, 
                      exclude_t0 = exclude_t0, bias_type = bias_type,
                      boot_mean = mean_boot_ests,
-                     ate_0 = ate_0)
+                     ate_0 = ate_0,
+                     n = n)
       })
     synth_ates <- map(synths, 'synthetic_ate') %>% unlist
     shrunk_ates <- map(synths, 'shrunk_ate') %>% unlist
@@ -97,7 +98,7 @@ combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL
     comb <- do_combination(ests = rm_ests, name_0 = name_0, C = C, 
                            exclude_t0 = exclude_t0, bias_type = bias_type,
                            boot_mean = mean_boot_ests,
-                           ate_0 = ate_0)
+                           ate_0 = ate_0, n = n)
     synth_ates <- comb$synthetic_ate
     shrunk_ates <- comb$shrunk_ate
     synth_mse <- comb$naive_mse
@@ -230,7 +231,7 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
     if (is.null(boot_mean)) stop('Need bootstrap samples to compute bootstrap bias type.')
     B <- boot_mean - boot_mean[i_0]
   } else if (bias_type == 'none') {
-    B <- 0
+    B <- rep(0, n_ests)
   } else if (bias_type == 'shrunk') {
     if (is.null(n)) stop('n must be provided for shrunk bias.')
     if (is.null(ate_0)) {
