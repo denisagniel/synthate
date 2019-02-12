@@ -1,11 +1,8 @@
-resample_joint_distn <- function(dat, predfn) {
-  yhat <- predfn(dat)
+resample_joint_distn <- function(dat, ypredfn, dpredfn) {
   mod_dat <- dat %>%
-    mutate(yhat = predfn(dat),
+    mutate(yhat = ypredfn(dat),
            e = y - yhat,
-           y_0 = predfn(dat %>% mutate(d = 0)),
-           y_1 = predfn(dat %>% mutate(d = 1)),
-           ate_0 = mean(y_1 - y_0))
+           ate_0 = dpredfn(dat))
   e <- mod_dat$e
   mod_dat <- mod_dat %>% select(-e)
   new_dat <- mod_dat %>%
@@ -15,7 +12,7 @@ resample_joint_distn <- function(dat, predfn) {
   new_dat
 }
 
-resample_fn <- function(dat, predfn, B,
+resample_fn <- function(dat, ypredfn, dpredfn, B,
                         ate_list,
                         outcome_fm,
                         ps_fm,
@@ -23,7 +20,7 @@ resample_fn <- function(dat, predfn, B,
                         outcome_fam) {
   theta_bing <- theta_adj <- theta_boot <- list()
   for (b in 1:B) {
-    resample_data <- resample_joint_distn(dat, predfn)
+    resample_data <- resample_joint_distn(dat, ypredfn, dpredfn)
     resample_data <- estimate_scores(resample_data, 
                                  outcome_fm = outcome_fm,
                                  ps_fm = ps_fm,
@@ -53,7 +50,7 @@ resample_fn <- function(dat, predfn, B,
     resample_adj <- resample_data %>%
       mutate(y = case_when(
         d == 0 ~ y,
-        d == 1 ~ y - y_1 + y_0
+        d == 1 ~ y - ate_0
       ))
     resample_adj <- estimate_scores(resample_adj, 
                                      outcome_fm = outcome_fm,
