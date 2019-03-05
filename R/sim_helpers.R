@@ -137,14 +137,14 @@ split_sample_fn <- function(ds, gen_mod, ate_list, B, C = NULL) {
   ab_ds <- a_thetahat %>%
     filter(type == 'raw') %>%
     select(theta_0, ate) %>%
-    merge(b_bhat, by.x = 'theta_0', by.y = 'est') %>%
+    merge(b_bhat %>% select(-theta_0), by.x = 'theta_0', by.y = 'est') %>%
     group_by(type) %>%
     summarise(theta_s = sum(ate*b))
   
   ba_ds <- b_thetahat %>%
     filter(type == 'raw') %>%
     select(theta_0, ate) %>%
-    merge(a_bhat, by.x = 'theta_0', by.y = 'est') %>%
+    merge(a_bhat %>% select(-theta_0), by.x = 'theta_0', by.y = 'est') %>%
     group_by(type) %>%
     summarise(theta_s = sum(ate*b))
   
