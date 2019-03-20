@@ -1,3 +1,32 @@
+#' Generate data for 
+#'
+#' @param n desired sample size.
+#' @param dgp character string indicating desired data-generating process. Currently the following DGPs are implemented, each based on a different publication: \code{ks}, Kang and Shafer; \code{ld}, Lunceford and Davidian; \code{fi} Fan and Imai; \code{ls}, Leacy and Stuart; \code{ik} Iacus and King; \code{iw} Waernbaum; \code{pa} Austin.
+#' @param correct_outcome logical indicating whether the outcome model should eb correctly specified.
+#' @param correct_ps logical indicating whether the propensity score model should be correctly specified. 
+#'
+#' @return a list of objects including
+
+#' @export
+#'
+#' @examples
+#' gen_mod <- generate_data(n = 100, 
+#'                          dgp = 'ks', 
+#'                          correct_outcome = FALSE,
+#'                          correct_ps = TRUE)
+generate_data <- function(n, dgp, correct_outcome = TRUE, correct_ps = TRUE) {
+  genfn <- get(paste0('generate_model_', dgp))
+  mod <- genfn(correct_outcome, correct_ps)
+  data <- mod$data_fn(n)
+  list(data = data,
+       dgp = dgp,
+       outcome_fm = mod$outcome_fm,
+       outcome_fam = mod$outcome_fam,
+       ps_fm = mod$ps_fm,
+       ps_fam = mod$ps_fam,
+       cov_ids = mod$cov_ids,
+       true_ate = mod$true_ate)
+}
 #--------------------------------
 ## all data-generating mechanisms
 #--------------------------------
@@ -155,7 +184,7 @@ generate_model_ik <- function(correct_outcome, correct_ps) {
   }
   if (correct_ps) {
     cov_ids <- c('age2', 'educ2', 'black', 'hisp', 'married',
-                 'nodegr', 'u74', 'u75',
+                 'nodegr', #'u74', 'u75',
                  'l74', 'l75', 're74_2', 're75_2')
     ps_fm <- stringr::str_c(cov_ids, collapse = ' + ')
   }  else {
@@ -381,18 +410,4 @@ generate_data_sj <- function(n, gamma_c = 0.5, compliance_p = 0.5, compliance_ef
                          s = 1*(z == 1 & c == 1), ## receipt of treatment
                          y = y)
   sim_data
-}
-
-generate_data <- function(n, dgp, correct_outcome = TRUE, correct_ps = TRUE) {
-  genfn <- get(paste0('generate_model_', dgp))
-  mod <- genfn(correct_outcome, correct_ps)
-  data <- mod$data_fn(n)
-  list(data = data,
-       dgp = dgp,
-       outcome_fm = mod$outcome_fm,
-       outcome_fam = mod$outcome_fam,
-       ps_fm = mod$ps_fm,
-       ps_fam = mod$ps_fam,
-       cov_ids = mod$cov_ids,
-       true_ate = mod$true_ate)
 }

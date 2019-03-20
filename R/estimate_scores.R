@@ -1,5 +1,28 @@
+#' Estimate propensity and prognostic scores.
+#'
+#' @param this_data data frame to estimate scores on.
+#' @param outcome_fm formula for the outcome model.
+#' @param outcome_fam distributional family for outcome model.
+#' @param ps_fm formula for the propensity score model.
+#' @param ps_fam distributional family for propensity score model.
+#' @param wt optional case weights. Default is NULL.
+#'
+#' @return data frame augmented with \code{ps}, the propensity score, \code{prog_score}, the prognostic score, \code{pi}, the propensity score if treated or 1 minus the propensity score if control, and \code{ps_strat}, a numeric value indicating the quintile of the propensity score that each individual falls in.
+#' @export
+#'
+#' @examples
+#' gen_mod <- generate_data(n = 100, 
+#'                          dgp = 'ks', 
+#'                          correct_outcome = FALSE,
+#'                          correct_ps = TRUE)
+#' this_data <- gen_mod$data
+#' this_data <- estimate_scores(this_data, outcome_fm = outcome_fm,
+#'                              ps_fm = ps_fm,
+#'                              ps_fam = ps_fam,
+#'                              outcome_fam = outcome_fam)
+#'  this_data
 estimate_scores <- function(this_data, outcome_fm, outcome_fam = gaussian,
-                            ps_fm, ps_fam = binomial, wt = NULL, ...) {
+                            ps_fm, ps_fam = binomial, wt = NULL) {
   # browser()
   ps_fm <- as.formula(stringr::str_c('d ~ ', ps_fm))
   prog_fm <- as.formula(stringr::str_c('y ~ ', outcome_fm))

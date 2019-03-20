@@ -1,4 +1,65 @@
-combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL, print = FALSE, exclude_t0 = FALSE, bias_type = 'raw_diff', ate_0 = NULL, n = NULL,...) {
+#' Create a synthetic estimator by combining multiple candidate estimators.
+#'
+#' Creates a synthetic estimator by minimizing the (estimated) mean squared error of a linear combination of multiple candidate estimators.
+#'
+#' @param ests one-row, p-column data frame of estimators.
+#' @param name_0 character value of the name of the presumed unbiased estimator, \eqn{\theta_0}. Default is NULL, which returns results for using each candidate estimator as \eqn{\theta_0}, one synthetic estimator for each. If \code{ate_0} is given, then it is used as \eqn{\theta_0} in place of this.
+#' @param boot_ests p-column matrix of bootstrap estimators corresponding to the estimators in \code{ests}. If NULL, then \code{cov} must be supplied.
+#' @param cov p x p covariance matrix of \code{ests}. Default is NULL, but if supplied \code{boot_ests} are not needed.
+#' @param print logical indicating whether details should be printed. Default is FALSE.
+#' @param exclude_t0 logical indicating whether \eqn{\theta_0} should be considered an external estimator (not a candidate for combining with others). Default is FALSE.
+#' @param bias_type method to compute the bias in the mean squard error. Default is \code{raw_diff}, which computes the bias as the raw difference between each of the candidate estimator and \eqn{\theta_0}. Other options to compute the bias include: \code{bootstrap} which computes the bias as the difference between the mean of the bootstrap samples and the observed value of \eqn{\theta_0}; \code{bootstrap_all} which computes the bias as the mean of the difference between the bootstrapped version of the candidate estimator and the bootstrapped version of \eqn{\theta_0}; \code{none} which assumes no bias; \code{shrunk} which computes the bias as the raw difference divided by \code{n}. 
+#' @param ate_0 external value of \eqn{\theta_0}. Default is NULL, in which case \eqn{\theta_0} is taken to be \code{name_0}. 
+#' @param n sample size. Default is NULL. Needed only if \code{bias_type} is \code{shrunk}.
+#'
+#' @return list of three objects, including \code{ate_res} which gives results for the synthetic estimator, \code{b_res} which gives results for how the estimators were combined, and \code{C} which gives the covariance matrix of the estimators. 
+#'
+#' @examples
+#'
+#' gen_mod <- generate_data(n = 100, 
+#'                          dgp = 'ks', 
+#'                          correct_outcome = FALSE,
+#'                          correct_ps = TRUE)
+#' this_data <- gen_mod$data
+#' this_data <- estimate_scores(this_data, outcome_fm = outcome_fm,
+#'                              ps_fm = ps_fm,
+#'                              ps_fam = ps_fam,
+#'                              outcome_fam = outcome_fam)
+#' thetahat <- with(gen_mod,
+#'                  estimate_ates(this_data,
+#'                           ate_list,
+#'                           cov_ids = cov_ids,
+#'                           outcome_fm = stringr::str_c('d + ', outcome_fm),
+#'                           outcome_fam = outcome_fam))
+#'                           predict_delta <- function(d) {
+#'                           gen_mod$true_ate
+#'                           }
+#'  resample_thetas <- with(gen_mod, resample_fn(dat = this_data,
+#'                                 dpredfn = predict_delta,
+#'                                 B = B,
+#'                                 ate_list = ate_list,
+#'                                 outcome_fm = outcome_fm,
+#'                                 ps_fm = ps_fm,
+#'                                 ps_fam = ps_fam,
+#'                                 outcome_fam = outcome_fam))
+#'  boot_theta <- resample_thetas[[1]] %>% as.matrix
+#'  
+#'  synthetic_estimator <- combine_estimators(thetahat,
+#'  boot_ests = boot_theta,
+#'  name_0 = 'ate_dr',
+#'  bias_type = 'raw_diff')
+#'  synthetic_estimator$ate_res
+#' @export 
+
+combine_estimators <- function(ests, 
+                               name_0 = NULL, 
+                               boot_ests = NULL, 
+                               cov = NULL, 
+                               print = FALSE, 
+                               exclude_t0 = FALSE, 
+                               bias_type = 'raw_diff', 
+                               ate_0 = NULL, 
+                               n = NULL,...) {
   # browser()
   if (is.null(boot_ests) & is.null(cov)) {
     stop("Must enter either resampled estimates or covariance estimate.")
@@ -159,204 +220,3 @@ combine_estimators <- function(ests, name_0 = NULL, boot_ests = NULL, cov = NULL
        )
 }
 
-
-combine_estimators_linear <- function(data, fn_0, other_fns, print = FALSE, ...) {
-  # browser()
-  omega <- lapply(other_fns, function(f) {
-    f(data, ...)
-  }) %>% bind_cols
-  n_ests <- length(other_fns) + 1
-  omega_0 <- fn_0(data, ...) %>% unlist
-
-  all_omegas <- cbind(omega_0, omega)
-
-
-  # C_omega <- cov(all_omegas*data$y)
-  C <- t(as.matrix(all_omegas)) %*% as.matrix(all_omegas) * var(data$y)
-  B <- colSums((all_omegas - omega_0)*data$y)
-  n <- nrow(data)
-
-  qq <- C + B %*% t(B)
-
-  Amat <- cbind(rep(1, n_ests), diag(n_ests))
-  convex_soln <- quadprog::solve.QP(qq, dvec = rep(0, n_ests),
-                                    Amat = Amat, bvec = c(1, rep(0, n_ests)),
-                                    meq = 1)
-  if (print) print(convex_soln)
-  b_convex <- convex_soln$solution
-
-  convex_omega <- c( as.matrix(all_omegas) %*% b_convex)
-  dumb_omega <- all_omegas %>% rowMeans
-
-  convex_ate <- sum(data$y*convex_omega)
-  dumb_ate <-  sum(data$y*dumb_omega)
-  list(convex_ate = convex_ate,
-       dumb_ate = dumb_ate,
-       C = C,
-       # C_omega = C_omega,
-       B = B,
-       b = b_convex)
-}
-
-do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, is_cv = FALSE, bias_type = 'raw_diff', boot_mean = NULL, ate_0 = NULL, n = NULL) {
-# browser()
-  est_0 <- ests %>% select_(name_0) %>% unlist
-  i_0 <- which(colnames(ests) == name_0)
-  v_0 <- C[i_0, i_0]
-  v <- diag(C)[-i_0]
-  r <- C[i_0,][-i_0]
-
-  if (exclude_t0) {
-    est_names <- colnames(ests)
-    est_names <- est_names[est_names != name_0]
-    ests <- ests %>% select_(.dots = est_names)
-    C <- C[-i_0, -i_0]
-  }
-  n_ests <- length(ests)
-
-  if (bias_type == 'raw_diff') {
-    #-------------------------
-    # raw differences
-    if (is.null(ate_0)) {
-      B <- unlist(ests) - unlist(est_0)
-    } else B <- unlist(ests) - ate_0
-    
-  } else if (bias_type == 'bootstrap') {
-    if (is.null(boot_mean)) stop('Need bootstrap samples to compute bootstrap bias type.')
-    
-    if (is.null(ate_0)) {
-      B <- boot_mean - unlist(est_0)
-    } else B <- boot_mean - ate_0
-  } else if (bias_type == 'bootstrap_all') {
-    if (is.null(boot_mean)) stop('Need bootstrap samples to compute bootstrap bias type.')
-    B <- boot_mean - boot_mean[i_0]
-  } else if (bias_type == 'none') {
-    B <- rep(0, n_ests)
-  } else if (bias_type == 'shrunk') {
-    if (is.null(n)) stop('n must be provided for shrunk bias.')
-    if (is.null(ate_0)) {
-      B <- (unlist(ests) - unlist(est_0))/n
-    } else B <- (unlist(ests) - ate_0)/n
-  }
-  
-  qq <- C + B %*% t(B)
-  qq_adj <- qq/norm(qq, '2')
-  convex_soln <- qp(qq_adj, n_ests)
-  # cs_adj <- qp(qq_adj, n_ests)
-
-  #-------------------------
-  # adjusted differences
-  w <- B
-  w[-i_0] <- B[-i_0]^2/(v_0 + v - 2*r + B[-i_0]^2)
-  Btilde <- B*w
-  qqtilde <- C + Btilde %*% t(Btilde)
-  qqt_adj <- qqtilde/norm(qqtilde, '2')
-  shrinkage_soln <- qp(qqt_adj, n_ests)
-
-
-
-
-  if (print) print(convex_soln)
-  b_convex <- convex_soln$solution
-  convex_ate <- unlist(ests) %*% b_convex
-  b_shrink <- shrinkage_soln$solution
-  shrunk_ate <- unlist(ests) %*% b_shrink
-
-  r_mat <- matrix(r, n_ests-1, n_ests-1)
-  pn <- v_0 - r
-  tn <- v_0 + C[-i_0,-i_0] - r_mat - t(r_mat)
-  w_aff <- solve(tn + B[-i_0] %*% t(B[-i_0])) %*% pn
-
-  v_0 - t(pn) %*% solve(tn) %*% pn
-
-  # gamma <- mvnfast::rmvn(1000, mu = rep(0, n_ests-1), sigma = tn)
-  # g <- diag(gamma %*% solve(tn) %*% t(gamma))
-  # qty <- rep(0, 1000)
-  # for (i in 1:1000) {
-  #   gamma_i <- gamma[i,]
-  #   g_i <- t(gamma_i) %*% solve(tn) %*% gamma_i
-  #   qty[i] <- g_i^2/(1+g_i)^2 * t(pn) %*% solve(tn) %*% gamma_i %*% t(gamma_i) %*% solve(tn) %*% pn
-  # }
-  # browser()
-  # var_est <- v_0 - t(pn) %*% solve(tn) %*% pn + mean(qty)
-  k <- n_ests-1
-  omega <- rchisq(10000, df = k)
-  if (is_cv) {
-    qty <- mean(omega^2/k/(1+omega)^2)
-  } else qty <- mean(omega^3/k/(1+omega)^2)
-  var_est <- v_0 - t(pn) %*% solve(tn) %*% pn *(1 - qty)
-
-  # browser()
-  naive_var <- t(b_convex) %*% C %*% b_convex
-  naive_mse <- naive_var + (t(b_convex) %*% B)^2
-  naive_mse2 <- (sqrt(naive_var) + 1/2*abs(t(b_convex) %*% B))^2
-
-  shrunk_var <- t(b_shrink) %*% C %*% b_shrink
-  shrunk_mse <- shrunk_var + (t(b_shrink) %*% B)^2
-  shrunk_mse2 <- (sqrt(shrunk_var) + 1/2*abs(t(b_shrink) %*% B))^2
-  list(b = b_convex, synthetic_ate = convex_ate, b_shrink = b_shrink,
-       shrunk_ate = shrunk_ate, shrinkage_factor = w,
-       naive_var = naive_var, naive_mse = naive_mse,
-       naive_mse2 = naive_mse2,
-       shrunk_var = shrunk_var, shrunk_mse = shrunk_mse,
-       shrunk_mse2 = shrunk_mse2,
-       th_var = var_est)
-}
-
-qp <- function(qq, n_ests) {
-  Amat <- cbind(rep(1, n_ests), diag(n_ests))
-  quadprog::solve.QP(qq, dvec = rep(0, n_ests),
-                                    Amat = Amat, bvec = c(1, rep(0, n_ests)),
-                                    meq = 1)
-}
-
-get_deriv <- function(all_theta, v_0, c, r, B, b, i_0) {
-  # browser()
-  theta <- all_theta[-i_0]
-  theta_0 <- all_theta[i_0]
-  p <- length(r)
-  bone <- rep(1, p)
-  sigmatilde <- matrix(v_0, p, p) - matrix(r, p, p) - matrix(r, p, p, byrow = TRUE) - c
-  num <- v_0 * bone - r
-  bb <- B[B != 0] %*% t(B[B != 0])
-
-  dB <- matrix(0, p+1, p+1)
-
-  D_0 <- matrix(0, p, p)
-  for (i in 1:p) {
-    for (k in 1:p) {
-      D_0[i,k] <- unlist(2*theta_0 - theta[i] - theta[k])
-    }
-  }
-# browser()
-  upper_right <- solve(sigmatilde + bb, D_0) %*% solve(sigmatilde + bb, num)
-  upper_left <- -sum(upper_right)
-  dB[i_0,1] <- upper_left
-  dB[i_0,-1] <- upper_right
-
-  for (j in 1:p) {
-    D <- matrix(0, p, p)
-    for (i in 1:p) {
-      for (k in 1:p) {
-        if (i == j & k == j) {
-          D[i,k] <- unlist(2*(theta[j] - theta_0))
-        } else if (i == j) {
-          D[i,k] <- unlist(theta[k] - theta_0)
-        } else if (k == j) {
-          D[i,k] <- unlist(theta[i] - theta_0)
-        }
-      }
-    }
-    if (j < i_0) {
-      dB[j,-1] <- solve(sigmatilde + bb, D) %*% solve(sigmatilde + bb, num)
-      dB[j, 1] <- -sum(dB[j + 1,-1])
-    } else {
-      dB[j + 1,-1] <- solve(sigmatilde + bb, D) %*% solve(sigmatilde + bb, num)
-      dB[j+1, 1] <- -sum(dB[j + 1,-1])
-    }
-
-  }
-# browser()
-
-  dB %*% unlist(all_theta) + b
-}

@@ -1,18 +1,74 @@
+#' Functions to estimate the average treatment effect
+#'
+#' @param this_data a data frame with value \code{y} for the outcome, \code{d} for the treatment, and \code{w} for a case weight.
+#' @param ... additional arguments to be passed indicating, for example, the outcome formula, propensity score formula, or other things on a case by case basis.
+#'
+#' @return a 1 x 1 data frame containing the named ATE
+#' @export 
+#'
+#' @examples
+#' 
+#' ate_list <- list(
+#' ipw1 = ipw1_ate,
+#' ipw2 = ipw2_ate,
+#' ipw3 = ipw3_ate,
+#' strat = strat_ate,
+#' strat_regr = strat_regr_ate,
+#' match_ps = match_ps_ate,
+#' match_prog = match_prog_ate,
+#' match_both = match_both_ate,
+#' cal_ps = caliper_ps_ate,
+#' cal_both = caliper_both_ate,
+#' regr = regr_ate,
+#' dr = dr_ate,
+#' bal = bal_ate,
+#' hdbal = highdim_bal_ate
+#' )
+#' gen_mod <- generate_data(n = 100, 
+#'                          dgp = 'ks', 
+#'                          correct_outcome = FALSE,
+#'                          correct_ps = TRUE)
+#' this_data <- gen_mod$data
+#' this_data <- estimate_scores(this_data, outcome_fm = outcome_fm,
+#'                              ps_fm = ps_fm,
+#'                              ps_fam = ps_fam,
+#'                              outcome_fam = outcome_fam)
+#' thetahat <- with(gen_mod,
+#'                  estimate_ates(this_data,
+#'                           ate_list,
+#'                           cov_ids = cov_ids,
+#'                           outcome_fm = stringr::str_c('d + ', outcome_fm),
+#'                           outcome_fam = outcome_fam))
+#' thetahat
+#' 
+
+ate <- function(this_data, specific_ate, ...) {
+  specific_ate(this_data, ...)
+}
+
+#' @rdname ate
+#' @export 
 naive_ate <- function(this_data, ...) {
   this_data %>%
     summarise(ate_naive = sum(y*d*w)/sum(d*w) - sum(y*(1-d)*w)/sum((1-d)*w))
 }
 
+#' @rdname ate
+#' @export
 ipw1_ate <- function(this_data, ...) {
   this_data %>%
     summarise(ate_ipw_1 = mean(y/pi*d*w) - mean(y/pi*(1-d)*w))
 }
 
+#' @rdname ate
+#' @export
 ipw2_ate <- function(this_data, ...) {
   this_data %>%
     summarise(ate_ipw_2 = sum(y/pi*d*w)/sum(d/pi*w) - sum(y/pi*(1-d)*w)/sum((1-d)/pi*w))
 }
 
+#' @rdname ate
+#' @export
 ipw3_ate <- function(this_data, ...) {
   this_data %>%
     mutate(c1 = sum((d - ps)/ps)/sum((d-ps)^2/ps^2),
@@ -22,6 +78,8 @@ ipw3_ate <- function(this_data, ...) {
     summarise(ate_ipw_3 = sum(y*a*w)/sum(a*w) - sum(y*b*w)/sum(b*w))
 }
 
+#' @rdname ate
+#' @export
 strat_ate <- function(this_data, ...) {
   strata_summary <- this_data %>% group_by(d, ps_strat) %>%
     summarise(mu = sum(y*w)/sum(w))
@@ -34,6 +92,8 @@ strat_ate <- function(this_data, ...) {
     summarise(ate_strat = diff(mu))
 }
 
+#' @rdname ate
+#' @export
 rf_ate <- function(this_data, outcome_fm, ...) {
   # browser()
   outcome_fm <- as.formula(stringr::str_c('y ~ d + ', outcome_fm))
@@ -47,6 +107,8 @@ rf_ate <- function(this_data, outcome_fm, ...) {
   this_data %>% summarise(rf_ate =  sum(w*(yhat1 - yhat0))/sum(w))
 }
 
+#' @rdname ate
+#' @export
 cart_ate <- function(this_data, outcome_fm, ...) {
   # browser()
   outcome_fm <- as.formula(stringr::str_c('y ~ d + ', str_replace(outcome_fm, '\\*', '\\+')))
@@ -86,6 +148,8 @@ cart_ate <- function(this_data, outcome_fm, ...) {
   this_data %>% summarise(cart_ate =  sum(w*(yhat1 - yhat0))/sum(w))
 }
 
+#' @rdname ate
+#' @export
 pscart_ate <- function(this_data, ps_fm, ...) {
   browser()
   this_fm <- as.formula(stringr::str_c('d ~ ', ps_fm))
@@ -108,7 +172,8 @@ pscart_ate <- function(this_data, ps_fm, ...) {
     ungroup %>% summarise(pscart_ate = mean(ydiff, na.rm = TRUE))
 }
 
-
+#' @rdname ate
+#' @export
 strat_regr_ate <- function(this_data, outcome_fm, outcome_fam = gaussian, ...) {
   # browser()
   outcome_fm <- as.formula(stringr::str_c('y ~ ', outcome_fm))
@@ -156,6 +221,8 @@ generic_match_ate <- function(this_data, matching_vars,
   df
 }
 
+#' @rdname ate
+#' @export
 match_ps_ate <- function(this_data, ...) {
   if (is.null(this_data$ps_K)) {
     generic_match_ate(this_data, this_data$ps, nm = 'match_ps')
@@ -165,6 +232,8 @@ match_ps_ate <- function(this_data, ...) {
   }
 
 }
+#' @rdname ate
+#' @export
 match_prog_ate <- function(this_data, ...) {
   if (is.null(this_data$prog_K)) {
     generic_match_ate(this_data, this_data$prog_score, nm = 'match_prog')
@@ -173,6 +242,8 @@ match_prog_ate <- function(this_data, ...) {
                 sum(y*w*prog_K*(1-d))/sum(w*prog_K*(1-d)))
   }
 }
+#' @rdname ate
+#' @export
 match_both_ate <- function(this_data, ...) {
   if (is.null(this_data$both_K)) {
     generic_match_ate(this_data, cbind(this_data$ps, this_data$prog_score), nm = 'match_both')
@@ -182,6 +253,8 @@ match_both_ate <- function(this_data, ...) {
   }
 }
 
+#' @rdname ate
+#' @export
 caliper_ps_ate <- function(this_data, ...) {
   if (is.null(this_data$cal_ps_K)) {
     generic_match_ate(this_data, this_data$ps, nm = 'cal_match_ps',
@@ -196,6 +269,8 @@ caliper_ps_ate <- function(this_data, ...) {
   }
 
 }
+#' @rdname ate
+#' @export
 caliper_prog_ate <- function(this_data, ...) {
   if (is.null(this_data$cal_prog_K)) {
     generic_match_ate(this_data, this_data$prog_score, nm = 'cal_match_prog',
@@ -210,6 +285,8 @@ caliper_prog_ate <- function(this_data, ...) {
   }
 
 }
+#' @rdname ate
+#' @export
 caliper_both_ate <- function(this_data, ...) {
   if (is.null(this_data$cal_both_K)) {
     generic_match_ate(this_data, cbind(this_data$ps, this_data$prog_score),
@@ -224,7 +301,8 @@ caliper_both_ate <- function(this_data, ...) {
   }
 
 }
-
+#' @rdname ate
+#' @export
 caliper_nn_ate <- function(this_data, ...) {
   if (is.null(this_data$cal_nn_K)) {
     generic_match_ate(this_data, this_data$ps, nm = 'cal_match_nn',
@@ -239,6 +317,8 @@ caliper_nn_ate <- function(this_data, ...) {
 
 }
 
+#' @rdname ate
+#' @export
 caliper_logit_ate <- function(this_data, ...) {
   if (is.null(this_data$cal_logit_K)) {
     generic_match_ate(this_data, log(this_data$ps/(1-this_data$ps)), nm = 'cal_match_logit',
@@ -254,6 +334,8 @@ caliper_logit_ate <- function(this_data, ...) {
 
 }
 
+#' @rdname ate
+#' @export
 regr_ate <- function(this_data, outcome_fm, outcome_fam = gaussian, ...) {
   # browser()
   outcome_fm <- as.formula(stringr::str_c('y ~ ', outcome_fm))
@@ -284,6 +366,8 @@ regr_ate <- function(this_data, outcome_fm, outcome_fam = gaussian, ...) {
   this_data %>% summarise(ate_regr = sum(w*(yhat_1 - yhat_0))/sum(w))
 }
 
+#' @rdname ate
+#' @export
 dr_ate <- function(this_data, outcome_fm, outcome_fam = gaussian, ...) {
   # browser()
   outcome_fm <- as.formula(stringr::str_c('y ~ ', outcome_fm))
@@ -311,9 +395,11 @@ dr_ate <- function(this_data, outcome_fm, outcome_fam = gaussian, ...) {
                 sum(w*((1-d)*y/(1-ps) + (d - ps)/(1-ps)*yhat_0))/sum(w))
 }
 
+#' @rdname ate
+#' @export
 bal_ate <- function(this_data, cov_ids, ...) {
   # browser()
-  this_covm <- this_data %>% select(one_of(cov_ids)) %>% as.matrix
+  this_covm <- this_data %>% dplyr::select(one_of(cov_ids)) %>% as.matrix
   ate_bal <- try(ATE::ATE(Y = this_data$y, Ti = this_data$d,
                           X = this_covm), silent = TRUE)
   if (class(ate_bal) == 'try-error') {
@@ -321,8 +407,11 @@ bal_ate <- function(this_data, cov_ids, ...) {
   } else data.frame(ate_bal = ate_bal$est[3])
 }
 
+#' @rdname ate
+#' @export
 highdim_bal_ate <- function(this_data, cov_ids, ...) {
-  this_covm <- this_data %>% select(one_of(cov_ids)) %>% as.matrix
+  # browser()
+  this_covm <- this_data %>% dplyr::select(one_of(cov_ids)) %>% as.matrix
   bhd_fit <- try(balanceHD::residualBalance.ate(X = this_covm,
                                                 Y = this_data$y,
                                                 W = this_data$d), silent = TRUE)
@@ -331,9 +420,11 @@ highdim_bal_ate <- function(this_data, cov_ids, ...) {
   } else data.frame(ate_bhd = bhd_fit)
 }
 
+#' @rdname ate
+#' @export
 cem_ate <- function(this_data, cov_ids, ...) {
   # browser()
-  bal_data <- this_data %>% select(d, one_of(cov_ids))
+  bal_data <- this_data %>% dplyr::select(d, one_of(cov_ids))
   bal_1 <- cem::cem(treatment = 'd', data = bal_data)
   if (class(bal_1) == 'try-error') {
     data.frame(ate_cem = NA)
@@ -348,14 +439,17 @@ cem_ate <- function(this_data, cov_ids, ...) {
   }
 }
 
+#' @rdname ate
+#' @export
 grf_ate <- function(this_data, cov_ids, ...) {
-  x <- this_data %>% select_(.dots = cov_ids) %>% as.matrix
+  x <- this_data %>% dplyr::select_(.dots = cov_ids) %>% as.matrix
   grf_fit <- grf::causal_forest(X = x, W = this_data$d, Y = this_data$y)
   data.frame(grf_ate = grf::average_treatment_effect(grf_fit)[1])
 }
 
+
 het_trt_grf <- function(this_data, cov_ids, ...) {
-  x <- this_data %>% select_(.dots = cov_ids) %>% as.matrix
+  x <- this_data %>% dplyr::select_(.dots = cov_ids) %>% as.matrix
   grf_fit <- grf::causal_forest(X = x, W = this_data$d, Y = this_data$y)
   predict(grf_fit)$predictions
 }
