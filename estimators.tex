@@ -1,0 +1,166 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Estimators of the average treatment effect},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Estimators of the average treatment effect}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+\input{GrandMacros}
+
+Here, we document all candidate estimators we will use in building
+synthetic causal estimators. For the most part, we write the estimators
+in the form
+
+\begin{align*}
+\sumin \omega_i y_i,
+\end{align*}
+
+where \(\omega_i\) is a weight function that can in general depend on
+all the data. Let \(d_i\) be the treatment indicator, and let \(\bx_i\)
+denote covariates. We will denote the propensity score as \(e_i\) and
+the prognostic score as \(g_i\).
+
+\begin{itemize}
+\tightlist
+\item
+  IPW:
+  \[\omega_i = \frac{d_i}{e_i \sumin \frac{d_i}{e_i}} -  \frac{1-d_i}{(1-e_i)\sumin \frac{1-d_i}{1-e_i}}\]
+\item
+  Regression \[ \omega_i = \left\{(X'X)^{-1}X'\right\}_{ji} \] where
+  this refers to the appropriate entry of the hat matrix and \(X\) is
+  the design matrix including covariates and treatment.
+\item
+  Regression within \(K\) strata
+  \[ \omega_i = \sum_{k=1}^KK^{-1}\frac{n_k}{n}I\{e_i \in E_k\}\left\{(X(k)'X(k))^{-1}X(k)'\right\}_{ji} \]
+  where \(\{E_k\}_{k = 1, ..., K}\) is a partition of (0,1) and \(X(k)\)
+  is the design matrix including only those individuals for whom
+  \(e_i \in E_k\).
+\item
+  Doubly robust
+  \[ \omega_i = n^{-1}\left\{ \frac{d_i}{e_i} - \frac{1-d_i}{1-e_i} - \sum_{j=1}^n\left( \frac{d_j - e_j}{e_j}h_{j1i} + \frac{d_j - e_j}{1-e_j}h_{j0i}\right)  \right\} \]
+  where \(h_{jdi}\) corresponds to the \(i\)th entry in the matrix
+  \(X_{jd}(X'X)^{-1}X'\) and \(X_{jd}\) corresponds to the \(j\)th row
+  of \(X\) with treatment set to value \(d\).
+\item
+  Stratified
+  \[ \omega_i = K^{-1}\sum_{k=1}^K\frac{n_k}{n}I\{e_i \in E_k\}\left\{\frac{d_i}{\sumin d_iI\{e_i \in E_k\}} -  \frac{1-d_i}{\sumin (1-d_i)I\{e_i \in E_k\}}\right\} \]
+  where \(n_k = \sumin I\{e_i \in E_k\}\).
+\item
+  Matching (\(M = 5\)) with replacement on propensity
+  \[ \omega_i = n^{-1}(2d_i - 1)\left(1 + M^{-1}\sum_{j: d_j \neq d_i}I\left\{\sum_{k=1}^n I\left\{|e_i - e_j| > |e_k - e_j|\right\}\right) < M\right\} \]
+\item
+  Matching (\(M = 5\)) with replacement on prognostic
+  \[ \omega_i = n^{-1}(2d_i - 1)\left(1 + M^{-1}\sum_{j: d_j \neq d_i} I\left\{\sum_{k=1}^n I\left\{|g_i - g_j| > |g_k - g_j|\right\} < M\right\}\right) \]
+\item
+  Matching (\(M = 5\)) with replacement on both scores
+  \[ \omega_i = n^{-1}(2d_i - 1)\left(1 + M^{-1}\sum_{j: d_j \neq d_i} I\left\{\sum_{k=1}^n I\left\{\|z_i - z_j\| > \|z_k - z_j\|\right\} < M\right\}\right) \]
+  where \(z_i\) is the vector of both scores.
+\item
+  Caliper (\(\delta = 0.05\)) matching (\(M = 5\)) with replacement on
+  propensity score
+  \[ \omega_i = n^{-1}(2d_i - 1)I\{|e_i - e_j| < \delta \quad \exists j\}\left(1 + M^{-1}\sum_{j: d_j \neq d_i} I\{|e_i - e_j| < \delta\}I\left\{\sum_{k=1}^n I\left\{|e_i - e_j| > |e_k - e_j|\right\} < M\right\}\right) \]
+\item
+  Caliper (\(\delta = 0.05\)) matching (\(M = 5\)) with replacement on
+  prognostic score
+  \[ \omega_i = n^{-1}(2d_i - 1)I\{|g_i - g_j| < \delta \quad \exists j\}\left(1 + M^{-1}\sum_{j: d_j \neq d_i} I\{|g_i - g_j| < \delta\}I\left\{\sum_{k=1}^n I\left\{|g_i - g_j| > |g_k - g_j|\right\} < M\right\}\right) \]
+\item
+  Caliper (\(\delta = 0.2\)) matching (\(M = 5\)) with replacement on
+  both scores
+  \[ \omega_i = n^{-1}(2d_i - 1)I\{\|z_i - z_j\| < \delta \quad \exists j\}\left(1 + M^{-1}\sum_{j: d_j \neq d_i} I\{\|z_i - z_j\| < \delta\}I\left\{\sum_{k=1}^n I\left\{\|z_i - z_j\| > \|z_k - z_j\|\right\} < M\right\}\right) \]\\
+\item
+  Balancing \[ \omega_i = d_ip_K(\bx_i) - (1-d_i)q_K(x_i), \] where
+  \(p_K(\bx_i)\) and \(q_K(\bx_i)\) are weights that ensure that
+  \(\sumin d_ip_K(\bx_i)u_K(\bx_i) = \sumin (1-d_i)p_K(\bx_i)u_K(\bx_i) = n\inv\sumin u_K(\bx_i)\)
+  for some contrasts encoded in \(u_K(\bx_i)\).
+\item
+  Approximate residual balancing \[
+  \bxbar\trans(\bbetahat_t - \bbetahat_c) + \sumin d_i\gamma_{t,i}(y_i - \bx_i\trans\bbetahat_t) - \sumin (1-d_i)\gamma_{c,i}(y_i - \bx_i\trans\bbetahat_c),\]
+  where
+  \[\bgamma_t = \argmin{\bgamma} \left\{(1-\zeta)\|\bgamma\|_2^2 + \zeta\|\bxbar - \bx_t\trans\bgamma\|_\infty^2\right\}\]
+  subject to \(\sum_{i : d_i = 1} \gamma_i = 1\) and
+  \(0 \leq \gamma_i \leq n_t^{-2/3}\) and \(\bgamma_c\) is defined
+  similarly.
+\end{itemize}
+
+
+\end{document}

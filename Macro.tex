@@ -1,0 +1,329 @@
+\newcommand{\smallT}{\scriptscriptstyle{T}}
+\newcommand{\ikikp}{ ^{ik}_{\imath \kappa}}
+\newcommand{\sumi}{\sum_{i=1}^{n_{\D}}}
+\newcommand{\sumip}{\sum_{\imath<i}}
+\newcommand{\sumj}{\sum_{j=n_{\D}+1}^{n_{\D}+n_{\C}}}
+\newcommand{\suml}{\sum_{l=1}^{K_j}}
+\newcommand{\sumk}{\sum_{k=1}^{K_i}}
+\newcommand{\sumkp}{\sum_{\kappa=1}^{K_{\imath}}}
+\newcommand{\sumik}{\sumi \sumk}
+\newcommand{\sumjl}{\sumj \suml}
+\newcommand{\nd}{n_{\D}}
+\newcommand{\Nd}{N_{\D}}
+\newcommand{\nc}{n_{\C}}
+\newcommand{\Nc}{N_{\C}}
+\newcommand{\ndinv}{\nd^{-1}}
+\newcommand{\Ndinv}{\Nd^{-1}}
+\newcommand{\ncinv}{\nc^{-1}}
+\newcommand{\Ncinv}{\Nc^{-1}}
+\newcommand{\nchalf}{\nc^{\half}}
+\newcommand{\ncnhalf}{\nc^{-\half}}
+\newcommand{\ndhalf}{\nd^{\half}}
+\newcommand{\ndnhalf}{\nd^{-\half}}
+
+\newcommand{\Nchalf}{\Nc^{\half}}
+\newcommand{\Ncnhalf}{\Nc^{-\half}}
+\newcommand{\Ndhalf}{\Nd^{\half}}
+\newcommand{\Ndnhalf}{\Nd^{-\half}}
+\newcommand{\Ndnq}{\Nd^{-2}}
+\newcommand{\Ndnqhalf}{\Nd^{-\frac{3}{2}}}
+
+\newcommand{\md}{m_{\D}}
+\newcommand{\mdnqhalf}{\md^{-\frac{3}{2}}}
+
+
+\newcommand{\roc}{\mbox{ROC}}
+\newcommand{\ROC}{\mbox{ROC}}
+\newcommand{\C}{{\bar{\mbox{\tiny \tiny D}}}}
+\newcommand{\D}{{\tiny \mbox{\tiny \tiny D}}}
+%\newcommand{\smDbar}{{\scriptscriptstyle{\bar{\rm \tiny D}}}}
+\newcommand{\smDbar}{{\scriptscriptstyle \C}}
+\newcommand{\smD}{{\scriptscriptstyle \D}}
+\newcommand{\smC}{{\mbox{\tiny \tiny C}}}
+\newcommand{\rocX}{\roc_{\bX}}
+\newcommand{\sd}{S_{\D}}
+\newcommand{\SdX}{S_{\D, \bX}}
+\newcommand{\SdZ}{S_{\D, \bZ}}
+\newcommand{\ShatdX}{\Shat_{\D, \bX}}
+\newcommand{\ShatdXi}{\Shat_{\D, \bfXi}}
+\newcommand{\snd}{S_{\C}}
+\newcommand{\sndx}{S_{\C,\bx}}
+\newcommand{\sndz}{S_{\C,\bz}}
+\newcommand{\sndzi}{S_{\C,\bz_i}}
+\newcommand{\sndZi}{S_{\C,\bZ_i}}
+\newcommand{\sndX}{S_{\C,\bx}}
+\newcommand{\sndZ}{S_{\C,\bZ}}
+\newcommand{\sndZik}{S_{\C,\bZ_{ik}}}
+\newcommand{\shatd}{\Shat_{\D}}
+\newcommand{\shatnd}{\Shat_{\C}}
+\newcommand{\shatndx}{\Shat_{\C,\bx}}
+\newcommand{\shatndz}{\Shat_{\C,\bz}}
+\newcommand{\shatndzi}{\Shat_{\C,\bz_i}}
+\newcommand{\shatndZi}{\Shat_{\C,\bZ_i}}
+\newcommand{\shatndX}{\Shat_{\C,\bx}}
+\newcommand{\shatndZ}{\Shat_{\C,\bZ}}
+\newcommand{\shatndZik}{\Shat_{\C,\bZ_{ik}}}
+\newcommand{\snhatndZik}{\Shat_{\C,\bZ_{ik}}^{-1}}
+\newcommand{\Sd}{S_{\D}}
+\newcommand{\Snd}{S_{\C}}
+\newcommand{\Fd}{F_{\D}}
+\newcommand{\Fc}{F_{\C}}
+\newcommand{\Fchat}{\Fhat_{\C}}
+\newcommand{\Sndx}{S_{\C,\bx}}
+\newcommand{\Sndz}{S_{\C,\bz}}
+\newcommand{\Sndzi}{S_{\C,\bz_i}}
+\newcommand{\SndX}{S_{\C,\bx}}
+\newcommand{\SndZ}{S_{\C,\bZ}}
+\newcommand{\SnndZ}{S_{\C,\bZ}^{-1}}
+\newcommand{\SndZik}{S_{\C,\bZ_{ik}}}
+\newcommand{\SnndZik}{S_{\C,\bZ_{ik}}^{-1}}
+\newcommand{\Shatd}{\Shat_{\D}}
+\newcommand{\Shatnd}{\Shat_{\C}}
+\newcommand{\Snhatnd}{\Shat_{\C}^{-1}}
+\newcommand{\Shatndx}{\Shat_{\C,\bx}}
+\newcommand{\Shatndz}{\Shat_{\C,\bz}}
+\newcommand{\Shatndzi}{\Shat_{\C,\bz_i}}
+\newcommand{\ShatndZi}{\Shat_{\C,\bZ_i}}
+\newcommand{\ShatndX}{\Shat_{\C,\bx}}
+\newcommand{\ShatndZ}{\Shat_{\C,\bZ}}
+\newcommand{\ShatndZik}{\Shat_{\C,\bZ_{ik}}}
+\newcommand{\SnhatndZik}{\Shat_{\C,\bZ_{ik}}^{-1}}
+\newcommand{\SnhatndZ}{\Shat_{\C,\bZ}^{-1}}
+
+\newcommand{\Sc}{S_{\C}}
+\newcommand{\Scx}{S_{\C,\bx}}
+\newcommand{\Scz}{S_{\C,\bz}}
+\newcommand{\Sczi}{S_{\C,\bz_i}}
+\newcommand{\ScZi}{S_{\C,\bZ_i}}
+\newcommand{\ScX}{S_{\C,\bx}}
+\newcommand{\ScZ}{S_{\C,\bZ}}
+\newcommand{\ScZik}{S_{\C,\bZ_{ik}}}
+\newcommand{\ScinvZi}{S_{\C,\bZ_{i}}^{-1}}
+\newcommand{\ScinvZik}{S_{\C,\bZ_{ik}}^{-1}}
+\newcommand{\Shatc}{\Shat_{\C}}
+\newcommand{\Shatcinv}{\Shat_{\C}^{-1}}
+\newcommand{\Shatcx}{\Shat_{\C,\bx}}
+\newcommand{\Shatcz}{\Shat_{\C,\bz}}
+\newcommand{\Shatczi}{\Shat_{\C,\bz_i}}
+\newcommand{\ShatcZi}{\Shat_{\C,\bZ_i}}
+\newcommand{\ShatcX}{\Shat_{\C,\bx}}
+\newcommand{\ShatcZ}{\Shat_{\C,\bZ}}
+\newcommand{\ShatcZik}{\Shat_{\C,\bZ_{ik}}}
+\newcommand{\ShatcinvZik}{\Shat_{\C,\bZ_{ik}}^{-1}}
+\newcommand{\ScinvhatZ}{\Shat_{\C,\bZ}^{-1}}
+
+
+
+\newcommand{\yd}{Y_{\D}}
+\newcommand{\ynd}{Y_{\C}}
+\newcommand{\yc}{Y_{\C}}
+\newcommand{\yndj}{Y_{ j}}
+\newcommand{\ydi}{Y_{i}}
+\newcommand{\yik}{Y_{\D ik}}
+\newcommand{\ydik}{Y_{\D ik}}
+\newcommand{\ycj}{Y_{\C j}}
+\newcommand{\ycjl}{Y_{\C jl}}
+\newcommand{\yikp}{Y_{\D \imath\kappa }}
+\newcommand{\yt}{\Ysc_{\D}}
+\newcommand{\yti}{\Ysc_{\D i}}
+\newcommand{\ytik}{\Ysc_{\D ik}}
+\newcommand{\ytikp}{\Ysc_{\D \imath\kappa}}
+\newcommand{\ytikhat}{\widehat{\Ysc}_{\D ik}}
+\newcommand{\ytikphat}{\widehat{\Ysc}_{\D \imath\kappa}}
+\newcommand{\ytdip}{\Ysc_{\D \imath}}
+
+\newcommand{\Yd}{Y_{\D}}
+\newcommand{\Ynd}{Y_{\C}}
+\newcommand{\Yndj}{Y_{ j}}
+\newcommand{\Ydi}{Y_{i}}
+\newcommand{\Yik}{Y_{\D ik}}
+\newcommand{\Ydik}{Y_{\D ik}}
+\newcommand{\Ycjl}{Y_{\C jl}}
+\newcommand{\Yikp}{Y_{\D \imath\kappa }}
+\newcommand{\Yt}{\Ysc_{\D}}
+\newcommand{\Yti}{\Ysc_{\D i}}
+\newcommand{\Ytik}{\Ysc_{\D ik}}
+\newcommand{\Ytikp}{\Ysc_{\D \imath\kappa}}
+\newcommand{\Ytikhat}{\widehat{\Ysc}_{\D ik}}
+\newcommand{\Ytikphat}{\widehat{\Ysc}_{\D \imath\kappa}}
+\newcommand{\Ytdip}{\Ysc_{\D \imath}}
+
+
+\newcommand{\bZd}{\bZ_{\D}}
+\newcommand{\bZdik}{\bZ_{\D ik}}
+\newcommand{\bZdi}{\bZ_{\D i}}
+%\newcommand{\bZdip}{\bZ_{\imath}}
+%\newcommand{\bZdiip}{\bZ_{ i\imath}}
+\newcommand{\bZi}{\bZ_{i}}
+\newcommand{\bZip}{\bZ_{\imath}}
+\newcommand{\bZik}{\bZ_{ik}}
+\newcommand{\bZikp}{\bZ_{\imath\kappa}}
+\newcommand{\bZikikp}{\bZ_{\ikikp}}
+\newcommand{\bZj}{\bZ_{j}}
+\newcommand{\bZjl}{\bZ_{jl}}
+\newcommand{\bZjp}{\bZ_{\jmath}}
+\newcommand{\bZjjp}{\bZ_{j\jmath}}
+\newcommand{\bZjlp}{\bZ_{\jmath\iota}}
+\newcommand{\bZjljlp}{\bZ_{jl\jmath\iota}}
+
+\newcommand{\bBscik}{\bBsc_{ik}}
+\newcommand{\bBscikp}{\bBsc_{\imath\kappa}}
+\newcommand{\bBscikikp}{\bBsc_{\D \ikikp}}
+\newcommand{\bBscj}{\bBsc_{j}}
+\newcommand{\bBscjl}{\bBsc_{jl}}
+\newcommand{\bBscjp}{\bBsc_{j'}}
+\newcommand{\bBscjjp}{\bBsc_{jj'}}
+
+\newcommand{\bfXi}{\bX_{i}}
+\newcommand{\bfXik}{\bX_{ik}}
+ \newcommand{\bXik}{\bX_{ik}}
+\newcommand{\bfXikp}{\bX_{\imath\kappa}}
+ \newcommand{\bXikp}{\bX_{\imath\kappa}}
+\newcommand{\bfXip}{\bX_{\imath}}
+ \newcommand{\bXip}{\bX_{\imath}}
+\newcommand{\bfXiip}{\bX_{i\imath}}
+ \newcommand{\bXiip}{\bX_{i\imath}}
+\newcommand{\bfXikikp}{\bX_{\D \ikikp}}
+ \newcommand{\bXikikp}{\bX_{\D \ikikp}}
+\newcommand{\Pnd}{P_{\C}}
+\newcommand{\Pndi}{P_{\C i}}
+\newcommand{\Pndip}{P_{\C \imath}}
+\newcommand{\Pndiip}{P_{\C i\imath}}
+\newcommand{\Iikikp}{\Isc_{\D\ikikp}}
+\newcommand{\Phatnd}{\Phat_{\C}}
+\newcommand{\Phatndi}{\Phat_{\C i}}
+\newcommand{\Phatndik}{\Phat_{\C ik}}
+\newcommand{\Phatndip}{\Phat_{\C \imath}}
+\newcommand{\Phatndiip}{\Phat_{\C i\imath}}
+\newcommand{\Ihatikikp}{\widehat{\Isc}_{\D\ikikp}}
+\newcommand{\bUiip}{{\boldsymbol{\Usc}}_{\D i \imath }}
+\newcommand{\bUcj}{\boldsymbol{\Usc}_{\C j}}
+\newcommand{\bUhatiip}{{\boldsymbol{\Uschat}}_{\D i \imath }}
+\newcommand{\bUhatcj}{\boldsymbol{\Uschat}_{\C j}}
+
+
+\newcommand{\sumikikp}{\sum_{i, k, \imath, \kappa}}
+
+\newcommand{\ndpairn}{{\binom{\nd}{2}}^{\scriptstyle -1}}
+\newcommand{\ndpairnhalf}{\frac{\ndhalf}{\binom{\nd}{2}}}
+\newcommand{\ndpair}{\binom{\scriptstyle \nd}{2}}
+
+
+\newcommand{\ellhat}{\widehat{\ell}}
+
+\newcommand{\tpr}{\mbox{TPR}}
+\newcommand{\fpr}{\mbox{FPR}}
+\newcommand{\tprhat}{\widehat{\tpr}}
+\newcommand{\fprhat}{\widehat{\fpr}}
+\newcommand{\smtpr}{\mbox{\tiny TPR}}
+\newcommand{\smfpr}{\mbox{\tiny FPR}}
+\newcommand{\smtprhat}{\widehat{\smtpr}}
+\newcommand{\smfprhat}{\widehat{\smfpr}}
+
+\newcommand{\tprtilde}{\widetilde{\tpr}}
+\newcommand{\fprtilde}{\widetilde{\fpr}}
+\newcommand{\rochat}{\widehat\roc}
+\newcommand{\smroc}{\mbox{\tiny ROC}}
+\newcommand{\smrochat}{\widehat\smroc}
+\newcommand{\roctilde}{\widetilde\roc}
+
+
+
+\newcommand{\ndd}{n_{\D}}
+\newcommand{\nnd}{n_{\C}}
+\newcommand{\nndinv}{n_{\C}^{-1}}
+
+\newcommand{\Ud}{U_{\D}}
+\newcommand{\Udi}{U_{\D i}}
+\newcommand{\Udik}{U_{\D ik}}
+\newcommand{\Uhatd}{\Uhat_{\D}}
+\newcommand{\Uhatdi}{\Uhat_{\D i}}
+\newcommand{\Uhatdik}{\Uhat_{\D ik}}
+
+\renewcommand{\ydi}{Y_{\D i}}
+\renewcommand{\yndj}{Y_{\C j}}
+
+\newcommand{\pv}{\rm{pv}}
+
+\newcommand{\bXia}{\bX_i^a}
+\newcommand{\bXib}{\bX_i^b}
+\newcommand{\bXiu}{\bX_i(u)}
+
+\newcommand{\bEia}{\bE_{2i}}
+\newcommand{\bEib}{\bE_{0i}}
+\newcommand{\bEiu}{\bE_i(u)}
+
+\newcommand{\eia}{e_i(a)}
+\newcommand{\eib}{e_i(b)}
+\newcommand{\eiu}{e_i(u)}
+
+\newcommand{\I}{{\sf I}}
+\newcommand{\II}{{\sf II}}
+\newcommand{\III}{{\sf III}}
+
+
+\newcommand{\Indz}{\Isc_{\C,\bz}}
+\newcommand{\Indzi}{\Isc_{\C,\bz_i}}
+\newcommand{\IndZi}{\Isc_{\C,\bZ_i}}
+\newcommand{\IndX}{\Isc_{\C,\bx}}
+\newcommand{\IndZ}{\Isc_{\C,\bZ}}
+\newcommand{\IndZik}{\Isc_{\C,\bZ_{ik}}}
+\newcommand{\Ihatd}{\Ischat_{\D}}
+\newcommand{\Ihatnd}{\Ischat_{\C}}
+\newcommand{\Ihatndx}{\Ischat_{\C,\bx}}
+\newcommand{\Ihatndz}{\Ischat_{\C,\bz}}
+\newcommand{\Ihatndzi}{\Ischat_{\C,\bz_i}}
+\newcommand{\IhatndZi}{\Ischat_{\C,\bZ_i}}
+\newcommand{\IhatndX}{\Ischat_{\C,\bx}}
+\newcommand{\IhatndZ}{\Ischat_{\C,\bZ}}
+\newcommand{\IhatndZik}{\Ischat_{\C,\bZ_{ik}}}
+\newcommand{\InhatndZik}{\Ischat_{\C,\bZ_{ik}}^{-1}}
+
+\newcommand{\auc}{\mbox{AUC}}
+\newcommand{\auchat}{\widehat{\auc}}
+\newcommand{\aucX}{\auc_{\bX}}
+\newcommand{\aucXi}{\auc_{\bfXi}}
+\newcommand{\aucXik}{\auc_{\bfXik}}
+
+
+\newcommand{\pauc}{\mbox{pAUC}}
+\newcommand{\paac}{\mbox{pAAC}}
+\newcommand{\pauchat}{\widehat{\pauc}}
+\newcommand{\paucX}{\pauc_{\bX}}
+\newcommand{\paucXi}{\pauc_{\bfXi}}
+\newcommand{\paucXik}{\pauc_{\bfXik}}
+
+\newcommand{\Vd}{V_{\D}}
+\newcommand{\Vdi}{V_{\D i}}
+\newcommand{\Vdik}{V_{\D ik}}
+\newcommand{\Vhatd}{\Vhat_{\D}}
+\newcommand{\Vhatdi}{\Vhat_{\D i}}
+\newcommand{\Vhatdik}{\Vhat_{\D ik}}
+
+\newcommand{\A}{\mbox{\tiny A}}
+\newcommand{\Hnul}{\mbox{H}_0}
+\newcommand{\Halt}{\mbox{H}_1}
+\newcommand{\bZD}{\bZ_{\D}}
+\newcommand{\bZDi}{\bZ_{\D i}}
+\newcommand{\bZDik}{\bZ_{\D ik}}
+
+
+\newcommand{\bXvec}{\vec{\bX}}
+\newcommand{\bZvec}{\vec{\bZ}}
+\newcommand{\bXveci}{\vec{\bX}_{i}}
+\newcommand{\bXvecik}{\vec{\bX}_{ik}}
+\newcommand{\bZvecik}{\vec{\bZ}_{ik}}
+\newcommand{\bZvecj}{\vec{\bZ}_{j}}
+\newcommand{\bZvecjl}{\vec{\bZ}_{jl}}
+\newcommand{\Kdinv}{K_{\D}^{-1}}
+\newcommand{\Kd}{K_{\D}}
+\newcommand{\Indj}{I_{\C j}}
+\newcommand{\ssumik}{\sum_{i, k}}
+\newcommand{\ssumjl}{\sum_{j, l}}
+
+
+\newcommand{\gu}{g_{_u}}
+\newcommand{\dgu}{\dot{g}_{_u}}
+\newcommand{\deta}{\dot{\eta}}
+
+
