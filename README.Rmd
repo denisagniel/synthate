@@ -52,6 +52,4 @@ Short-hand        | Paper
 `ls`             | Leacy and Stuart (@Leacy2014)
 `ik`             | Iacus and King (@Iacus2009)
 
-
-
 ## References
