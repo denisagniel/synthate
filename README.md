@@ -36,11 +36,6 @@ There are currently seven DGPs derived from six different papers to choose from:
 | `ls`       | Leacy and Stuart (Leacy and Stuart (2014))       |
 | `ik`       | Iacus and King (Iacus, King, and Porro (2009))   |
 
-Lunceford & Davidian 2004 Stat. Med. (Lunceford et al. (2004))
---------------------------------------------------------------
-
--   Covariates are (**X****,** **V**)=(*X*<sub>1</sub>, *X*<sub>2</sub>, *X*<sub>3</sub>, *V*<sub>1</sub>, *V*<sub>2</sub>, *V*<sub>3</sub>). \\
-
 References
 ----------
 
