@@ -1,0 +1,34 @@
+---
+title: "Estimators of the average treatment effect"
+output:
+  pdf_document: 
+  keep_tex: true
+html_notebook: default
+---
+
+\def\sumin{\sum_{i=1}^n}
+\def\thetahat{\widehat{\theta}}
+\def\bthetahat{{\bf \widehat{\theta}}}
+\def\bone{{\bf 1}}
+\def\bomega{{\bf \omega}}
+
+Here, we document all candidate estimators we will use in building synthetic causal estimators. For the most part, we write the estimators in the form 
+\begin{align*}
+\sumin \omega_i y_i,
+\end{align*}
+where $\omega_i$ is a weight function that can in general depend on all the data. Let $d_i$ be the treatment indicator, and let $x_i$ denote covariates. We will denote the propensity score as $e_i$ and the prognostic score as $g_i$
+  ate_list <- list(
+    ipw = ipw2_ate,
+    strat = strat_ate,
+    strat_regr = strat_regr_ate,
+    match_ps = match_ps_ate,
+    match_prog = match_prog_ate,
+    match_both = match_both_ate,
+    cal_ps = caliper_ps_ate,
+    cal_both = caliper_both_ate,
+    grf = grf_ate,
+    regr = regr_ate,
+    dr = dr_ate,
+    bal = bal_ate,
+    hdbal = highdim_bal_ate
+  )

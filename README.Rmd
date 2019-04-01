@@ -52,7 +52,6 @@ Short-hand        | Paper
 `ls`             | Leacy and Stuart (@Leacy2014)
 `ik`             | Iacus and King (@Iacus2009)
 
-## Lunceford \& Davidian 2004 Stat. Med. (@Lunceford2004)
-- Covariates are $(\mathbf{X, V}) = (X_1, X_2, X_3, V_1, V_2, V_3)$.  \\
+
 
 ## References
