@@ -1,0 +1,58 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+bibliography: refs.bib
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  warning = FALSE, 
+  message = FALSE,
+  collapse = TRUE,
+  cache = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# synthate package: Synthetic estimators for the average treatment effect
+
+This package comprises a suite of tools to simulate various data-generating processes. Its purpose is to check the operating characteristics of various causal estimators and to optimally combine them.
+
+## Installation
+
+The `synthate` package can currently be obtained from GitLab: https://code.rand.org/agniel-projects/personal-packages/synthate or from GitHub at https://github.com/denisagniel/synthate. It may be downloaded by running
+
+```{r eval=FALSE}
+devtools::install_github('denisagniel/synthate')
+```
+
+## Overview
+
+There are three main features of `synthate`:
+
+- Simulating data
+- Causal estimation
+- Combining estimators
+
+### Simulating data
+
+There are currently seven DGPs derived from six different papers to choose from:
+
+Short-hand        | Paper
+---------------------|---------------------------------
+`ks`             | Kang and Schafer (@Kang2007)
+`ld`             | Lunceford and Davidian (@Lunceford2004)
+`iw`             | Waernbaum (@Waernbaum2012)
+`fi`         | Fan and Imai (@Fan2016)
+`pa`           | Austin (@Austin2009)
+`ls`             | Leacy and Stuart (@Leacy2014)
+`ik`             | Iacus and King (@Iacus2009)
+
+## Lunceford \& Davidian 2004 Stat. Med. (@Lunceford2004)
+- Covariates are $(\mathbf{X, V}) = (X_1, X_2, X_3, V_1, V_2, V_3)$.  \\
+
+## References
