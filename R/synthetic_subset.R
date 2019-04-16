@@ -86,8 +86,8 @@
 #'     estimators = c('ate_regr', 'ate_ipw2', 'ate_dr', 'ate_bal'))))
 #'     
 #'     
-synthetic_subset <- function(theta, boot, estimators, ...) {
-  if (!is.null(ates)) {
+synthetic_subset <- function(theta, boot, estimators = NULL, ...) {
+  if (!is.null(estimators)) {
     theta_use <- theta %>% 
       select(one_of(estimators))
     boot_use <- boot_theta %>% 
