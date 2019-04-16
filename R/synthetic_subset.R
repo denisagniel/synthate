@@ -38,10 +38,10 @@
 #'                          correct_outcome = FALSE,
 #'                          correct_ps = TRUE)
 #' this_data <- gen_mod$data
-#' this_data <- estimate_scores(this_data, outcome_fm = outcome_fm,
+#' this_data <- with(gen_mod, estimate_scores(this_data, outcome_fm = outcome_fm,
 #'                              ps_fm = ps_fm,
 #'                              ps_fam = ps_fam,
-#'                              outcome_fam = outcome_fam)
+#'                              outcome_fam = outcome_fam))
 #' thetahat <- with(gen_mod,
 #'                  estimate_ates(this_data,
 #'                           ate_list,

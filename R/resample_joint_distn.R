@@ -1,3 +1,20 @@
+#' Resample for 
+#'
+#' @param dat 
+#' @param ypredfn 
+#' @param dpredfn 
+#' @param B 
+#' @param ate_list 
+#' @param outcome_fm 
+#' @param ps_fm 
+#' @param ps_fam 
+#' @param outcome_fam 
+#' @param cov_ids 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 resample_fn <- function(dat, ypredfn = NULL, dpredfn, B,
                         ate_list,
                         outcome_fm,

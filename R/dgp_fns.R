@@ -110,7 +110,7 @@ generate_model_r <- function(correct_outcome, correct_ps) {
 
 
 generate_data_fi <- function(n, correct_ps, correct_outcome) {
-  z <- rnorm(4*n) %>% matrix(n, 4)
+  z <- rnorm(4*n, mean = 3, sd = 2) %>% matrix(n, 4)
   x <- z
   x[,1] <- exp(z[,1]/3)
   x[,2] = z[,2]/(1+exp(z[,1])) + 10
