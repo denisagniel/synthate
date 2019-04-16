@@ -1,17 +1,17 @@
-#' Resample for 
+#' Resample ATEs.
 #'
-#' @param dat 
-#' @param ypredfn 
-#' @param dpredfn 
-#' @param B 
-#' @param ate_list 
-#' @param outcome_fm 
-#' @param ps_fm 
-#' @param ps_fam 
-#' @param outcome_fam 
-#' @param cov_ids 
+#' @param dat data frame for analysis.
+#' @param ypredfn function to predict y, mostly deprecated, default is NULL.
+#' @param dpredfn function to predict the ATE used to demean data.
+#' @param B number of bootstrap replications.
+#' @param ate_list list of ATE functions.
+#' @param outcome_fm outcome formula.
+#' @param ps_fm propensity score formula.
+#' @param ps_fam propensity score family.
+#' @param outcome_fam outcome family.
+#' @param cov_ids names of covariates for matching/balancing.
 #'
-#' @return
+#' @return list of tibbles of resampled data.
 #' @export
 #'
 #' @examples
