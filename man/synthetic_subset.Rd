@@ -4,22 +4,19 @@
 \alias{synthetic_subset}
 \title{Compute synthetic estimator on a subset of candidate estimators.}
 \usage{
-synthetic_subset(theta, boot, estimators, ...)
+synthetic_subset(theta, boot, estimators = NULL, ...)
 }
 \arguments{
 \item{theta}{one-row data frame of candidate estimators.}
 
 \item{boot}{data frame of bootstrapped versions of candidate estimators.}
 
-\item{estimators}{vector of estimator names to be included in synthetic estimator.}
+\item{estimators}{vector of estimator names to be included in synthetic estimator; if NULL (the default) all estimators are used.}
 
 \item{...}{additional arguments to be passed to \code{combine_estimators}.}
 }
 \value{
-data frame with the following columns:
-\itemize{
-  \item \code{data} the
-}
+vector of synthetic estimators
 }
 \description{
 This function allows you to compute a set of candidate estimators and bootstrap estimates once and then compute on it many times. It's designed to work well with \code{map2}.
@@ -62,13 +59,14 @@ thetahat <- with(gen_mod,
                           }
  resample_thetas <- with(gen_mod, resample_fn(dat = this_data,
                                 dpredfn = predict_delta,
-                                B = B,
+                                B = 50,
                                 ate_list = ate_list,
                                 outcome_fm = outcome_fm,
                                 ps_fm = ps_fm,
                                 ps_fam = ps_fam,
-                                outcome_fam = outcome_fam))
- boot_theta <- resample_thetas[[1]] \%>\% as.matrix
+                                outcome_fam = outcome_fam,
+                                cov_ids = cov_ids))
+ boot_theta <- resample_thetas[[1]]
  
  synthetic_subset(thetahat, boot_theta,
                   estimators = c('ate_regr', 'ate_ipw2', 'ate_dr', 'ate_bal'))

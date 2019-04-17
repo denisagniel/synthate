@@ -4,16 +4,14 @@
 #'
 #' @param theta one-row data frame of candidate estimators.
 #' @param boot data frame of bootstrapped versions of candidate estimators.
-#' @param estimators vector of estimator names to be included in synthetic estimator.
+#' @param estimators vector of estimator names to be included in synthetic estimator; if NULL (the default) all estimators are used.
 #' @param ... additional arguments to be passed to \code{combine_estimators}.
 #'
-#' @return data frame with the following columns:
-#' \itemize{
-#'   \item \code{data} the
-#' }
+#' @return vector of synthetic estimators
 #' @export
 #'
 #' @import dplyr
+#' @importFrom purrr simplify
 #'
 #' @examples
 #' 
@@ -53,13 +51,14 @@
 #'                           }
 #'  resample_thetas <- with(gen_mod, resample_fn(dat = this_data,
 #'                                 dpredfn = predict_delta,
-#'                                 B = B,
+#'                                 B = 50,
 #'                                 ate_list = ate_list,
 #'                                 outcome_fm = outcome_fm,
 #'                                 ps_fm = ps_fm,
 #'                                 ps_fam = ps_fam,
-#'                                 outcome_fam = outcome_fam))
-#'  boot_theta <- resample_thetas[[1]] %>% as.matrix
+#'                                 outcome_fam = outcome_fam,
+#'                                 cov_ids = cov_ids))
+#'  boot_theta <- resample_thetas[[1]]
 #'  
 #'  synthetic_subset(thetahat, boot_theta,
 #'                   estimators = c('ate_regr', 'ate_ipw2', 'ate_dr', 'ate_bal'))
@@ -88,11 +87,9 @@
 #'     
 synthetic_subset <- function(theta, boot, estimators = NULL, ...) {
   if (!is.null(estimators)) {
-    theta_use <- theta %>% 
-      select(one_of(estimators))
-    boot_use <- boot_theta %>% 
-      select(one_of(estimators)) %>%
-      as.matrix
+    theta_use <- select(theta, one_of(estimators))
+    boot_use <- select(boot_theta, one_of(estimators))
+    boot_use <- as.matrix(boot_use)
   } else {
     theta_use <- theta
     boot_use <- boot
@@ -101,7 +98,5 @@ synthetic_subset <- function(theta, boot, estimators = NULL, ...) {
   comb <- combine_estimators(ests = theta_use,
                              boot_ests = boot_use,
                              ...)
-  comb$ate_res %>%
-    filter(!shrunk) %>%
-    pull(ate)
+  pull(filter(comb$ate_res, !shrunk), ate)
 }
