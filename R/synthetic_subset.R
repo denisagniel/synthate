@@ -61,28 +61,27 @@
 #'  boot_theta <- resample_thetas[[1]]
 #'  
 #'  synthetic_subset(thetahat, boot_theta,
-#'                   estimators = c('ate_regr', 'ate_ipw2', 'ate_dr', 'ate_bal'))
+#'                   estimators = c('ate_regr', 'ate_ipw_2', 'ate_dr', 'ate_bal'),
+#'                   name_0 = 'ate_dr')
 #'  synthetic_subset(thetahat, boot_theta,
-#'                   estimators = c('ate_regr', 'ate_ipw2', 'ate_dr', 'match_ps_ate'),
-#'                   ate_0 = thetahat$ate_bal)
+#'                   estimators = c('ate_regr', 'ate_ipw_2', 'ate_dr', 'match_ps'),
+#'                   ate_0 = thetahat$ate_bal,
+#'                   name_0 = 'ate_dr')
 #'  
-#'  out_df <- tibble(
-#'  n = n,
-#'  d = d,
-#'  j = j,
-#'  run = s,
+#'  out_df <- tibble::tibble(
 #'  thetahat = list(thetahat),
 #'  boot_theta = list(boot_theta))
 #'  
 #'  
+#'  ## 
 #'  
-#'  
-#'  mutate(out_df, 
-#'  theta_s = unlist(map2(
+#'  dplyr::mutate(out_df, 
+#'  theta_s = unlist(purrr::map2(
 #'     thetahat, 
 #'     boot_theta, 
 #'     synthetic_subset, 
-#'     estimators = c('ate_regr', 'ate_ipw2', 'ate_dr', 'ate_bal'))))
+#'     estimators = c('ate_regr', 'ate_ipw_2', 'ate_dr', 'ate_bal'),
+#'     name_0 = 'ate_dr')))
 #'     
 #'     
 synthetic_subset <- function(theta, boot, estimators = NULL, ...) {
