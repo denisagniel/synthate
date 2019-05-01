@@ -101,7 +101,8 @@ combine_estimators <- function(ests,
     synth_mse <- map(synths, 'naive_mse') %>% unlist
     shrunk_mse <- map(synths, 'shrunk_mse') %>% unlist
     synth_mse2 <- map(synths, 'naive_mse2') %>% unlist
-    shrunk_mse2 <- map(synths, 'shrunk_mse2') %>% unlist
+    asymp_mse <- map(synths, 'asymp_mse') %>% unlist
+    # shrunk_mse2 <- map(synths, 'shrunk_mse2') %>% unlist
     # thr_var <- map(synths, 'th_var') %>% unlist
 
     synth_b <- map(synths, 'b') %>% simplify
@@ -114,7 +115,7 @@ combine_estimators <- function(ests,
           ate = synth_ates,
           theta_0 = est_names,
           synthetic = TRUE,
-          var = synth_mse,
+          var = asymp_mse,
           # thr_var = thr_var,
           # var2 = synth_mse2,
           shrunk = FALSE
@@ -166,6 +167,7 @@ combine_estimators <- function(ests,
     shrunk_mse <- comb$shrunk_mse
     synth_mse2 <- comb$naive_mse2
     shrunk_mse2 <- comb$shrunk_mse2
+    asymp_mse <- comb$asymp_mse
 
     synth_b <- comb$b
     shrunk_b <- comb$b_shrink
@@ -177,7 +179,7 @@ combine_estimators <- function(ests,
           ate = synth_ates,
           theta_0 = name_0,
           synthetic = TRUE,
-          var = synth_mse,
+          var = asymp_mse,
           # var2 = synth_mse2,
           shrunk = FALSE
         ),

@@ -53,7 +53,14 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
   qqt_adj <- qqtilde/norm(qqtilde, '2')
   shrinkage_soln <- qp(qqt_adj, n_ests)
   
-  
+  msehat <- asymptotic_mse(V_0 = v_0,
+                           V = v,
+                           C = r,
+                           deltahat = B)
+  shrunk_msehat <- asymptotic_mse(V_0 = v_0,
+                           V = v,
+                           C = r,
+                           deltahat = Btilde)
   
   
   if (print) print(convex_soln)
@@ -62,12 +69,12 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
   b_shrink <- shrinkage_soln$solution
   shrunk_ate <- unlist(ests) %*% b_shrink
   
-  r_mat <- matrix(r, n_ests-1, n_ests-1)
-  pn <- v_0 - r
-  tn <- v_0 + C[-i_0,-i_0] - r_mat - t(r_mat)
-  w_aff <- solve(tn + B[-i_0] %*% t(B[-i_0])) %*% pn
+  # r_mat <- matrix(r, n_ests-1, n_ests-1)
+  # pn <- v_0 - r
+  # tn <- v_0 + C[-i_0,-i_0] - r_mat - t(r_mat)
+  # w_aff <- solve(tn + B[-i_0] %*% t(B[-i_0])) %*% pn
   
-  v_0 - t(pn) %*% solve(tn) %*% pn
+  # v_0 - t(pn) %*% solve(tn) %*% pn
   
   # gamma <- mvnfast::rmvn(1000, mu = rep(0, n_ests-1), sigma = tn)
   # g <- diag(gamma %*% solve(tn) %*% t(gamma))
@@ -79,26 +86,34 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
   # }
   # browser()
   # var_est <- v_0 - t(pn) %*% solve(tn) %*% pn + mean(qty)
-  k <- n_ests-1
-  omega <- rchisq(10000, df = k)
-  if (is_cv) {
-    qty <- mean(omega^2/k/(1+omega)^2)
-  } else qty <- mean(omega^3/k/(1+omega)^2)
-  var_est <- v_0 - t(pn) %*% solve(tn) %*% pn *(1 - qty)
+  # k <- n_ests-1
+  # omega <- rchisq(10000, df = k)
+  # if (is_cv) {
+  #   qty <- mean(omega^2/k/(1+omega)^2)
+  # } else qty <- mean(omega^3/k/(1+omega)^2)
+  # var_est <- v_0 - t(pn) %*% solve(tn) %*% pn *(1 - qty)
   
   # browser()
   naive_var <- t(b_convex) %*% C %*% b_convex
   naive_mse <- naive_var + (t(b_convex) %*% B)^2
   naive_mse2 <- (sqrt(naive_var) + 1/2*abs(t(b_convex) %*% B))^2
-  
-  shrunk_var <- t(b_shrink) %*% C %*% b_shrink
-  shrunk_mse <- shrunk_var + (t(b_shrink) %*% B)^2
-  shrunk_mse2 <- (sqrt(shrunk_var) + 1/2*abs(t(b_shrink) %*% B))^2
-  list(b = b_convex, synthetic_ate = convex_ate, b_shrink = b_shrink,
-       shrunk_ate = shrunk_ate, shrinkage_factor = w,
-       naive_var = naive_var, naive_mse = naive_mse,
+  # 
+  # shrunk_var <- t(b_shrink) %*% C %*% b_shrink
+  # shrunk_mse <- shrunk_var + (t(b_shrink) %*% B)^2
+  # shrunk_mse2 <- (sqrt(shrunk_var) + 1/2*abs(t(b_shrink) %*% B))^2
+  list(b = b_convex, 
+       synthetic_ate = convex_ate, 
+       b_shrink = b_shrink,
+       shrunk_ate = shrunk_ate, 
+       shrinkage_factor = w,
+       naive_var = naive_var, 
+       naive_mse = naive_mse,
        naive_mse2 = naive_mse2,
-       shrunk_var = shrunk_var, shrunk_mse = shrunk_mse,
-       shrunk_mse2 = shrunk_mse2,
-       th_var = var_est)
+       asymp_mse = msehat,
+       shrunk_mse = shrunk_msehat
+       # shrunk_var = shrunk_var, 
+       # shrunk_mse = shrunk_mse,
+       # shrunk_mse2 = shrunk_mse2,
+       # th_var = var_est
+       )
 }
