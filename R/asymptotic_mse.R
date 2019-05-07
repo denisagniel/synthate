@@ -25,8 +25,9 @@
 #' 
 asymptotic_mse <- function(V_0, V, C, deltahat) {
   P <- V_0 - C
-  TT <- V_0 + V - (matrix(1,nrow = k-1) %*% matrix(C, ncol = k-1)) - 
-    (matrix(C,nrow = k-1) %*% matrix(1, ncol = k-1))
+  k <- length(C)
+  TT <- V_0 + V - (matrix(1,nrow = k) %*% matrix(C, ncol = k)) - 
+    (matrix(C,nrow = k) %*% matrix(1, ncol = k))
   J <- mvnfast::rmvn(1000, mu = d, sigma = TT)
   K <- apply(J, 1, function(j) {
     (t(P) %*% solve(TT) %*% j %*% t(j) %*% solve(TT) %*% j) /
