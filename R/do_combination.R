@@ -54,11 +54,11 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
   shrinkage_soln <- qp(qqt_adj, n_ests)
   
   msehat <- asymptotic_mse(V_0 = v_0,
-                           V = v,
+                           V = C[-i_0,-i_0],
                            C = r,
                            deltahat = B[-i_0])
   shrunk_msehat <- asymptotic_mse(V_0 = v_0,
-                           V = v,
+                           V = C[-i_0,-i_0],
                            C = r,
                            deltahat = Btilde[-i_0])
   
