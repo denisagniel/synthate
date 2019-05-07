@@ -24,6 +24,7 @@
 #' asymptotic_mse(V_0, V, C, d)
 #' 
 asymptotic_mse <- function(V_0, V, C, deltahat) {
+  d <- deltahat
   P <- V_0 - C
   k <- length(C)
   TT <- V_0 + V - (matrix(1,nrow = k) %*% matrix(C, ncol = k)) - 
