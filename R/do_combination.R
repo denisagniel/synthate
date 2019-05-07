@@ -56,11 +56,11 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
   msehat <- asymptotic_mse(V_0 = v_0,
                            V = v,
                            C = r,
-                           deltahat = B)
+                           deltahat = B[-i_0])
   shrunk_msehat <- asymptotic_mse(V_0 = v_0,
                            V = v,
                            C = r,
-                           deltahat = Btilde)
+                           deltahat = Btilde[-i_0])
   
   
   if (print) print(convex_soln)
