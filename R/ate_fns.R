@@ -5,6 +5,15 @@
 #'
 #' @return a 1 x 1 data frame containing the named ATE
 #' @export 
+#' @importFrom randomForest randomForest
+#' @importFrom stringr str_c
+#' @importFrom rpart rpart rpart.control
+#' @importFrom Matching Match
+#' @importFrom dplyr select select_ one_of
+#' @importFrom grf causal_forest average_treatment_effect
+#' @importFrom cem cem att
+#' @importFrom balanceHD residualBalance.ate
+#' @importFrom ATE ATE
 #'
 #' @examples
 #' 
@@ -195,7 +204,7 @@ strat_regr_ate <- function(this_data, outcome_fm, outcome_fam = gaussian, ...) {
       #                       family = outcome_fam,
       #                       start = ini_fit$coefficients,
       #                       design = dsgn))
-      if (Dmisc::isErr(fit)) return(data.frame(te = NA, ps_strat = i))
+      if (class(fit) == 'try-error') return(data.frame(te = NA, ps_strat = i))
     } else fit <- ini_fit
     y0 <- predict(fit, newdata = this_sub %>% mutate(d = 0), type = 'response')
     y1 <- predict(fit, newdata = this_sub %>% mutate(d = 1), type = 'response')
@@ -399,7 +408,7 @@ dr_ate <- function(this_data, outcome_fm, outcome_fam = gaussian, ...) {
 #' @export
 bal_ate <- function(this_data, cov_ids, ...) {
   # browser()
-  this_covm <- this_data %>% dplyr::select(one_of(cov_ids)) %>% as.matrix
+  this_covm <- this_data %>% dplyr::select(dplyr::one_of(cov_ids)) %>% as.matrix
   ate_bal <- try(ATE::ATE(Y = this_data$y, Ti = this_data$d,
                           X = this_covm), silent = TRUE)
   if (class(ate_bal) == 'try-error') {
@@ -411,7 +420,7 @@ bal_ate <- function(this_data, cov_ids, ...) {
 #' @export
 highdim_bal_ate <- function(this_data, cov_ids, ...) {
   # browser()
-  this_covm <- this_data %>% dplyr::select(one_of(cov_ids)) %>% as.matrix
+  this_covm <- this_data %>% dplyr::select(dplyr::one_of(cov_ids)) %>% as.matrix
   bhd_fit <- try(balanceHD::residualBalance.ate(X = this_covm,
                                                 Y = this_data$y,
                                                 W = this_data$d), silent = TRUE)

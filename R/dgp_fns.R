@@ -8,6 +8,9 @@
 #' @return a list of objects including
 
 #' @export
+#' @importFrom stringr str_c
+#' @importFrom dplyr sample_n
+#' @importFrom mvnfast rmvn
 #'
 #' @examples
 #' gen_mod <- generate_data(n = 100, 

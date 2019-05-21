@@ -58,6 +58,4 @@ Functions to estimate the complier average causal effect or local average treatm
 }
 \examples{
 
-
-
 }

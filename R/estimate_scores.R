@@ -9,7 +9,8 @@
 #'
 #' @return data frame augmented with \code{ps}, the propensity score, \code{prog_score}, the prognostic score, \code{pi}, the propensity score if treated or 1 minus the propensity score if control, and \code{ps_strat}, a numeric value indicating the quintile of the propensity score that each individual falls in.
 #' @export
-#'
+#' @importFrom stringr str_c
+#' @importFrom survey svydesign svyglm
 #' @examples
 #' gen_mod <- generate_data(n = 100, 
 #'                          dgp = 'ks', 

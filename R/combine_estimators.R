@@ -50,6 +50,8 @@
 #'  bias_type = 'raw_diff')
 #'  synthetic_estimator$ate_res
 #' @export 
+#' @importFrom matrixcalc is.positive.definite
+#' @importFrom Matrix nearPD
 
 combine_estimators <- function(ests, 
                                name_0 = NULL, 

@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @examples
+#' @importFrom stringr str_c
 resample_fn <- function(dat, ypredfn = NULL, dpredfn, B,
                         ate_list,
                         outcome_fm,

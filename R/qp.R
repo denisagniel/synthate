@@ -1,3 +1,20 @@
+#' Solve quadratic program
+#'
+#'
+#' @param qq objective function
+#' @param n_ests number of candidate estimators
+#'
+#' @return list of objects from quadprog::solve.QP
+#' @importFrom matrixcalc is.positive.definite
+#' @importFrom quadprog solve.QP
+#'
+#' @examples
+#' rho <- 0.5
+#' d <- 3
+#' cov_mat <- rho*matrix(1, d, d) + (1-rho)*diag(d)
+#' bias <- runif(d)
+#' mse <- cov_mat + bias %*% t(bias)
+#' qp(mse, d)
 qp <- function(qq, n_ests) {
   if (!matrixcalc::is.positive.definite(round(qq, 9))) {
     qq_tst <- try(Matrix::nearPD(round(qq, 9))$mat)

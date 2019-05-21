@@ -8,7 +8,8 @@
 #'
 #' @examples
 #' 
-#' 
+#' @importFrom mgcv gam
+#' @importFrom tibble tibble
 #' 
 
 cace <- function(ds, specific_cace, ...) {
