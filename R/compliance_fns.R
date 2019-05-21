@@ -143,20 +143,22 @@ pps_fn <- function(ds) {
 #' @rdname cace
 #' @export 
 ipw_fn <- function(ds) {
-  with(ds, 
+  ipw_est <- with(ds, 
        PSPS_SM_weighting(Z = z,
                          D = s,
                          X = x,
                          Y = y))$CACE
+  tibble::tibble(ipw_est = ipw_est)
 }
 #' @rdname cace
 #' @export 
 ipw_regr_fn <- function(ds) {
-  with(ds, 
+  ipw_regr_est <- with(ds, 
        PSPS_SM_weighting(Z = z,
                          D = s,
                          X = x,
                          Y = y))$CACE.reg
+  tibble::tibble(ipw_regr_est = ipw_regr_est)
 }
 
 PSPS_SM_weighting = function(Z, D, X, Y, ep = 1) {
