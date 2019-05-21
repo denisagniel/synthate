@@ -147,7 +147,16 @@ ipw_fn <- function(ds) {
        PSPS_SM_weighting(Z = z,
                          D = s,
                          X = x,
-                         Y = y))
+                         Y = y))$CACE
+}
+#' @rdname cace
+#' @export 
+ipw_fn <- function(ds) {
+  with(ds, 
+       PSPS_SM_weighting(Z = z,
+                         D = s,
+                         X = x,
+                         Y = y))$CACE.reg
 }
 
 PSPS_SM_weighting = function(Z, D, X, Y, ep = 1) {
