@@ -1,4 +1,22 @@
+#' Functions to estimate the complier average causal effect or local average treatment effect
+#'
+#' @param ds a data frame with value \code{y} for the outcome, \code{z} for randomization/instrument, \code{s} for treatment receipt, and covariate \code{x}.
+#' @param ... additional arguments to be passed.
+#'
+#' @return a 1 x 1 data frame containing the named ATE
+#' @export 
+#'
+#' @examples
+#' 
+#' 
+#' 
 
+cace <- function(ds, specific_cace, ...) {
+  specific_cace(ds, ...)
+}
+
+#' @rdname cace
+#' @export 
 iv_fn <- function(ds) {
   # browser()
   prob_comply <- ds %>% filter(z == 1) %>%
@@ -14,6 +32,8 @@ iv_fn <- function(ds) {
   data.frame(iv_est = iv_est)
 }
 #
+#' @rdname cace
+#' @export 
 ivw_fn <- function(ds) {
   # grf_fit <- with(ds, grf::causal_forest(Y = y, X = x, W = z))
   ds_0 <- ds %>% mutate(z = 0)
@@ -22,7 +42,8 @@ ivw_fn <- function(ds) {
   delta <- predict(grf_fit, newdata = ds_1) - predict(grf_fit, newdata = ds_0)
   data.frame(ivw_fn = sum(delta)/sum(ds$pr_score))
 }
-
+#' @rdname cace
+#' @export 
 at_fn <- function(ds) {
   ybar_s1 <- ds %>% filter(s == 1) %>%
     summarise(mean(y)) %>% unlist
@@ -32,7 +53,8 @@ at_fn <- function(ds) {
   at_est <- ybar_s1 - ybar_s0
   data.frame(at_est = at_est)
 }
-
+#' @rdname cace
+#' @export 
 pp_fn <- function(ds) {
   ybar_pp1 <- ds %>% filter(s == 1, z == 1) %>%
     summarise(mean(y)) %>% unlist
@@ -42,7 +64,8 @@ pp_fn <- function(ds) {
   pp_est <- ybar_pp1 - ybar_pp0
   data.frame(pp_est = pp_est)
 }
-
+#' @rdname cace
+#' @export 
 tsls_fn <- function(ds) {
   tsls_m1 <- lm(s ~ x + z, data = ds)
   ds <- ds %>%
@@ -51,7 +74,8 @@ tsls_fn <- function(ds) {
   tsls_est <- coef(fit)[2]
   data.frame(tsls_est = tsls_est)
 }
-
+#' @rdname cace
+#' @export 
 itt_regr_fn <- function(ds) {
   # browser()
   # fit <- mgcv::gam(y ~ z + s(pr_score), data = ds)
@@ -59,7 +83,8 @@ itt_regr_fn <- function(ds) {
   regr_est <- coef(fit)[2]
   data.frame(regr_est)
 }
-
+#' @rdname cace
+#' @export 
 atregr_fn <- function(ds) {
   # browser()
   # fit <- mgcv::gam(y ~ s + s(pr_score), data = ds)
@@ -67,7 +92,8 @@ atregr_fn <- function(ds) {
   atregr_est <- coef(fit)[2]
   data.frame(atregr_est)
 }
-
+#' @rdname cace
+#' @export 
 ppregr_fn <- function(ds) {
   # browser()
   # fit <- mgcv::gam(y ~ s + s(pr_score), data = ds %>% filter(z == s))
@@ -75,7 +101,8 @@ ppregr_fn <- function(ds) {
   ppregr_est <- coef(fit)[2]
   data.frame(ppregr_est)
 }
-
+#' @rdname cace
+#' @export 
 ivs_fn <- function(ds) {
   ds %>%
     group_by(ps_grp) %>%
@@ -83,7 +110,8 @@ ivs_fn <- function(ds) {
     ungroup %>%
     summarise(ivs_est = mean(iv_est))
 }
-
+#' @rdname cace
+#' @export 
 ats_fn <- function(ds) {
   ds %>%
     group_by(ps_grp) %>%
@@ -91,7 +119,8 @@ ats_fn <- function(ds) {
     ungroup %>%
     summarise(ats_est = mean(at_est))
 }
-
+#' @rdname cace
+#' @export 
 pps_fn <- function(ds) {
   ds %>%
     group_by(ps_grp) %>%
@@ -111,7 +140,8 @@ pps_fn <- function(ds) {
 #   ) %>%
 #     summarise(ipw_est = mean(y*ipw_w))
 # }
-
+#' @rdname cace
+#' @export 
 ipw_fn <- function(ds) {
   with(ds, 
        PSPS_SM_weighting(Z = z,
