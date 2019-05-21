@@ -11,7 +11,6 @@
 #' @importFrom Matching Match
 #' @importFrom dplyr select select_ one_of
 #' @importFrom grf causal_forest average_treatment_effect
-#' @importFrom cem cem att
 #' @importFrom ATE ATE
 #'
 #' @examples
