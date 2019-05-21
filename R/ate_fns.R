@@ -12,7 +12,6 @@
 #' @importFrom dplyr select select_ one_of
 #' @importFrom grf causal_forest average_treatment_effect
 #' @importFrom cem cem att
-#' @importFrom balanceHD residualBalance.ate
 #' @importFrom ATE ATE
 #'
 #' @examples
