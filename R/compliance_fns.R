@@ -151,7 +151,7 @@ ipw_fn <- function(ds) {
 }
 #' @rdname cace
 #' @export 
-ipw_fn <- function(ds) {
+ipw_regr_fn <- function(ds) {
   with(ds, 
        PSPS_SM_weighting(Z = z,
                          D = s,
