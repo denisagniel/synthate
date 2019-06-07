@@ -29,10 +29,10 @@ generate_data_dl <- function(n = 500,
   y <- if_else(z == 1 & c == 1, y_1, y_0)
   
   sim_data <- tibble(id = 1:n,
-                         x = cbind(x1, x2, x3, x4),
                          z = z,
                          c = c,
                          s = 1*(z == 1 & c == 1), ## receipt of treatment
                          y = y)
+  sim_data$x <- cbind(x1, x2, x3, x4)
   sim_data
 }
