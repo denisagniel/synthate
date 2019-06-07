@@ -28,7 +28,7 @@ generate_data_dl <- function(n = 500,
   y_0 <- x1 + x2 + x3 + x4 + x5 + 2 + epsilon
   y <- if_else(z == 1 & c == 1, y_1, y_0)
   
-  sim_data <- data.frame(id = 1:n,
+  sim_data <- tibble(id = 1:n,
                          x = cbind(x1, x2, x3, x4),
                          z = z,
                          c = c,
