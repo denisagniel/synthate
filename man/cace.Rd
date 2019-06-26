@@ -15,6 +15,7 @@
 \alias{pps_fn}
 \alias{ipw_fn}
 \alias{ipw_regr_fn}
+\alias{get_weighted_y_c}
 \title{Functions to estimate the complier average causal effect or local average treatment effect}
 \usage{
 cace(ds, specific_cace, ...)
@@ -44,6 +45,8 @@ pps_fn(ds)
 ipw_fn(ds)
 
 ipw_regr_fn(ds)
+
+get_weighted_y_c(Z, D, X, Y)
 }
 \arguments{
 \item{ds}{a data frame with value \code{y} for the outcome, \code{z} for randomization/instrument, \code{s} for treatment receipt, and covariate \code{x}.}

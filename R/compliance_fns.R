@@ -105,10 +105,14 @@ ppregr_fn <- function(ds) {
 #' @rdname cace
 #' @export 
 ivs_fn <- function(ds) {
-  ds %>%
+  strat_ests <- ds %>%
     group_by(ps_grp) %>%
     do(iv_fn(.)) %>%
     ungroup %>%
+    filter(iv_est < Inf,
+           iv_est > -Inf,
+           !is.na(iv_est),
+           !is.nan(iv_est)) %>%
     summarise(ivs_est = mean(iv_est))
 }
 #' @rdname cace
@@ -118,6 +122,10 @@ ats_fn <- function(ds) {
     group_by(ps_grp) %>%
     do(at_fn(.)) %>%
     ungroup %>%
+    filter(at_est < Inf,
+           at_est > -Inf,
+           !is.na(at_est),
+           !is.nan(at_est)) %>%
     summarise(ats_est = mean(at_est))
 }
 #' @rdname cace
@@ -127,6 +135,10 @@ pps_fn <- function(ds) {
     group_by(ps_grp) %>%
     do(pp_fn(.)) %>%
     ungroup %>%
+    filter(pp_est < Inf,
+           pp_est > -Inf,
+           !is.na(pp_est),
+           !is.nan(pp_est)) %>%
     summarise(pps_est = mean(pp_est))
 }
 
@@ -232,3 +244,34 @@ PSPS_SM_weighting = function(Z, D, X, Y, ep = 1) {
   return(ACE)
 }
 
+#' @rdname cace
+#' @export 
+get_weighted_y_c = function(Z, D, X, Y) {
+  #augment the design X
+  N = length(Z) 
+  X = cbind(rep(1, N), X)
+  
+  #estimate the weights
+  D1 = D[Z==1]
+  X1 = X[Z==1, ]
+  data1 = cbind(D1, X1)
+  data1 = as.data.frame(data1)
+  
+  #logistic regression
+  logit.treat = glm(D1 ~ 0 +., data = data1, family = binomial(link = logit))
+  beta = coef(logit.treat)  
+  
+  #the predicted propensity score
+  #for compliers
+  ps.score.c = 	1/(1 + exp(-X%*%beta))
+  
+  #the probability of compliers and never-takers
+  pr.compliers   = sum(Z*D)/sum(Z)
+  
+  #weights for regression estimator
+  wc = ps.score.c[Z==0]/pr.compliers
+  
+  #weighted outcomes
+  weighted.Y.c = Y[Z==0]*wc
+  weighted.Y.c
+}

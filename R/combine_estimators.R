@@ -63,12 +63,16 @@ combine_estimators <- function(ests,
                                ate_0 = NULL, 
                                n = NULL,...) {
   # browser()
+  ests <- mutate_all(ests, function(x) {
+    ifelse(x == Inf | x == -Inf | is.nan(x), NA, x)
+  })
   if (is.null(boot_ests) & is.null(cov)) {
     stop("Must enter either resampled estimates or covariance estimate.")
   }
   if (!is.null(boot_ests)) {
     boot_ests[boot_ests == Inf] <- NA
     boot_ests[boot_ests == -Inf] <- NA
+    boot_ests[is.nan(boot_ests)] <- NA
     use_i <- as.vector(!is.na(ests) & colMeans(is.na(boot_ests)) < 0.5)
     rm_b <- boot_ests[,use_i]
 

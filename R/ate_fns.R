@@ -12,6 +12,7 @@
 #' @importFrom dplyr select select_ one_of
 #' @importFrom grf causal_forest average_treatment_effect
 #' @importFrom ATE ATE
+#' @importFrom magrittr "%>%"
 #'
 #' @examples
 #' 
