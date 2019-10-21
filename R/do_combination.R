@@ -46,28 +46,28 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
   
   #-------------------------
   # adjusted differences
-  w <- B
-  w[-i_0] <- B[-i_0]^2/(v_0 + v - 2*r + B[-i_0]^2)
-  Btilde <- B*w
-  qqtilde <- C + Btilde %*% t(Btilde)
-  qqt_adj <- qqtilde/norm(qqtilde, '2')
-  shrinkage_soln <- qp(qqt_adj, n_ests)
+  # w <- B
+  # w[-i_0] <- B[-i_0]^2/(v_0 + v - 2*r + B[-i_0]^2)
+  # Btilde <- B*w
+  # qqtilde <- C + Btilde %*% t(Btilde)
+  # qqt_adj <- qqtilde/norm(qqtilde, '2')
+  # shrinkage_soln <- qp(qqt_adj, n_ests)
   
   msehat <- asymptotic_mse(V_0 = v_0,
                            V = C[-i_0,-i_0],
                            C = r,
                            deltahat = B[-i_0])
-  shrunk_msehat <- asymptotic_mse(V_0 = v_0,
-                           V = C[-i_0,-i_0],
-                           C = r,
-                           deltahat = Btilde[-i_0])
+  # shrunk_msehat <- asymptotic_mse(V_0 = v_0,
+                           # V = C[-i_0,-i_0],
+                           # C = r,
+                           # deltahat = Btilde[-i_0])
   
   
   if (print) print(convex_soln)
   b_convex <- convex_soln$solution
   convex_ate <- unlist(ests) %*% b_convex
-  b_shrink <- shrinkage_soln$solution
-  shrunk_ate <- unlist(ests) %*% b_shrink
+  # b_shrink <- shrinkage_soln$solution
+  # shrunk_ate <- unlist(ests) %*% b_shrink
   
   # r_mat <- matrix(r, n_ests-1, n_ests-1)
   # pn <- v_0 - r
@@ -94,23 +94,23 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
   # var_est <- v_0 - t(pn) %*% solve(tn) %*% pn *(1 - qty)
   
   # browser()
-  naive_var <- t(b_convex) %*% C %*% b_convex
-  naive_mse <- naive_var + (t(b_convex) %*% B)^2
-  naive_mse2 <- (sqrt(naive_var) + 1/2*abs(t(b_convex) %*% B))^2
+  # naive_var <- t(b_convex) %*% C %*% b_convex
+  # naive_mse <- naive_var + (t(b_convex) %*% B)^2
+  # naive_mse2 <- (sqrt(naive_var) + 1/2*abs(t(b_convex) %*% B))^2
   # 
   # shrunk_var <- t(b_shrink) %*% C %*% b_shrink
   # shrunk_mse <- shrunk_var + (t(b_shrink) %*% B)^2
   # shrunk_mse2 <- (sqrt(shrunk_var) + 1/2*abs(t(b_shrink) %*% B))^2
   list(b = b_convex, 
        synthetic_ate = convex_ate, 
-       b_shrink = b_shrink,
-       shrunk_ate = shrunk_ate, 
-       shrinkage_factor = w,
-       naive_var = naive_var, 
-       naive_mse = naive_mse,
-       naive_mse2 = naive_mse2,
+       # b_shrink = b_shrink,
+       # shrunk_ate = shrunk_ate, 
+       # shrinkage_factor = w,
+       # naive_var = naive_var, 
+       # naive_mse = naive_mse,
+       # naive_mse2 = naive_mse2,
        asymp_mse = msehat,
-       shrunk_mse = shrunk_msehat
+       # shrunk_mse = shrunk_msehat
        # shrunk_var = shrunk_var, 
        # shrunk_mse = shrunk_mse,
        # shrunk_mse2 = shrunk_mse2,

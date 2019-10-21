@@ -97,5 +97,5 @@ synthetic_subset <- function(theta, boot, estimators = NULL, ...) {
   comb <- combine_estimators(ests = theta_use,
                              boot_ests = boot_use,
                              ...)
-  filter(comb$ate_res, !shrunk)
+  comb$ate_res
 }

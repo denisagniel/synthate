@@ -103,38 +103,24 @@ combine_estimators <- function(ests,
                      n = n)
       })
     synth_ates <- map(synths, 'synthetic_ate') %>% unlist
-    shrunk_ates <- map(synths, 'shrunk_ate') %>% unlist
-    synth_mse <- map(synths, 'naive_mse') %>% unlist
-    shrunk_mse <- map(synths, 'shrunk_mse') %>% unlist
-    synth_mse2 <- map(synths, 'naive_mse2') %>% unlist
+    # shrunk_ates <- map(synths, 'shrunk_ate') %>% unlist
+    # synth_mse <- map(synths, 'naive_mse') %>% unlist
+    # shrunk_mse <- map(synths, 'shrunk_mse') %>% unlist
+    # synth_mse2 <- map(synths, 'naive_mse2') %>% unlist
     asymp_mse <- map(synths, 'asymp_mse') %>% unlist
     # shrunk_mse2 <- map(synths, 'shrunk_mse2') %>% unlist
     # thr_var <- map(synths, 'th_var') %>% unlist
 
     synth_b <- map(synths, 'b') %>% simplify
-    shrunk_b <- map(synths, 'b_shrink') %>% simplify
-    shrinkage_facs <- map(synths, 'shrinkage_factor') %>% simplify
+    # shrunk_b <- map(synths, 'b_shrink') %>% simplify
+    # shrinkage_facs <- map(synths, 'shrinkage_factor') %>% simplify
 
-    ate_res <- bind_rows(
-      list(
+    ate_res <- 
         data.frame(
           ate = synth_ates,
           theta_0 = est_names,
           synthetic = TRUE,
-          var = asymp_mse,
-          # thr_var = thr_var,
-          # var2 = synth_mse2,
-          shrunk = FALSE
-        ),
-        data.frame(
-          ate = shrunk_ates,
-          theta_0 = est_names,
-          synthetic = TRUE,
-          var = shrunk_mse,
-          # var2 = shrunk_mse2,
-          shrunk = TRUE
-        )
-      ))
+          var = asymp_mse)
     # browser()
     en_mat <- matrix(est_names, length(est_names), length(est_names))
     if (exclude_t0) {
@@ -144,23 +130,10 @@ combine_estimators <- function(ests,
       use_names <- est_names
       ln <- length(est_names)
     }
-    b_res <- bind_rows(
-      list(
-        data.frame(
+    b_res <- data.frame(
           b = synth_b,
           est = use_names,
-          theta_0 = rep(est_names, each = ln),
-          shrunk = FALSE,
-          shrinkage_factor = 0
-        ),
-        data.frame(
-          b = shrunk_b,
-          est = use_names,
-          theta_0 = rep(est_names, each = ln),
-          shrunk = TRUE,
-          shrinkage_factor = shrinkage_facs
-        )
-      )
+          theta_0 = rep(est_names, each = ln)
     )
   } else {
     comb <- do_combination(ests = rm_ests, name_0 = name_0, C = C, 
@@ -168,55 +141,22 @@ combine_estimators <- function(ests,
                            boot_mean = mean_boot_ests,
                            ate_0 = ate_0, n = n)
     synth_ates <- comb$synthetic_ate
-    shrunk_ates <- comb$shrunk_ate
-    synth_mse <- comb$naive_mse
-    shrunk_mse <- comb$shrunk_mse
-    synth_mse2 <- comb$naive_mse2
-    shrunk_mse2 <- comb$shrunk_mse2
     asymp_mse <- comb$asymp_mse
 
     synth_b <- comb$b
-    shrunk_b <- comb$b_shrink
-    shrinkage_facs <- comb$shrinkage_factor
 
-    ate_res <- bind_rows(
-      list(
+    ate_res <- 
         data.frame(
           ate = synth_ates,
           theta_0 = name_0,
           synthetic = TRUE,
-          var = asymp_mse,
-          # var2 = synth_mse2,
-          shrunk = FALSE
-        ),
-        data.frame(
-          ate = shrunk_ates,
-          theta_0 = name_0,
-          synthetic = TRUE,
-          var = shrunk_mse,
-          # thr_var = thr_var,
-          # var2 = shrunk_mse2,
-          shrunk = TRUE
+          var = asymp_mse
         )
-      ))
-    b_res <- bind_rows(
-      list(
-        data.frame(
+    b_res <- data.frame(
           b = synth_b,
           est = est_names,
-          theta_0 = name_0,
-          shrunk = FALSE,
-          shrinkage_factor = 0
-        ),
-        data.frame(
-          b = shrunk_b,
-          est = est_names,
-          theta_0 = name_0,
-          shrunk = TRUE,
-          shrinkage_factor = shrinkage_facs
+          theta_0 = name_0
         )
-      )
-    )
   }
 
 
