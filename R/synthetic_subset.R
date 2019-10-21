@@ -91,7 +91,7 @@ synthetic_subset <- function(theta, boot, estimators = NULL, ...) {
     boot_use <- as.matrix(boot_use)
   } else {
     theta_use <- theta
-    boot_use <- boot
+    boot_use <- as.matrix(boot)
   }
   # browser()
   comb <- combine_estimators(ests = theta_use,
