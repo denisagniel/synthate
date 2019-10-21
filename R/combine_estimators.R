@@ -147,10 +147,10 @@ combine_estimators <- function(ests,
 
     ate_res <- 
         data.frame(
-          ate = synth_ates,
+          theta_s = synth_ates,
           theta_0 = name_0,
           synthetic = TRUE,
-          var = asymp_mse
+          msehat = asymp_mse
         )
     b_res <- data.frame(
           b = synth_b,

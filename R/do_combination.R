@@ -109,7 +109,7 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, i
        # naive_var = naive_var, 
        # naive_mse = naive_mse,
        # naive_mse2 = naive_mse2,
-       asymp_mse = msehat,
+       asymp_mse = msehat
        # shrunk_mse = shrunk_msehat
        # shrunk_var = shrunk_var, 
        # shrunk_mse = shrunk_mse,
