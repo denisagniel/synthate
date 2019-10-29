@@ -108,13 +108,11 @@ synthetic_split_subset <- function(thetahat_a, thetahat_b, boot, estimators = NU
   theta_as <- theta_a_use %>%
     gather(est, thetahat) %>%
     inner_join(bhat_b) %>%
-    filter(!shrunk) %>%
     group_by(theta_0) %>%
     summarise(theta_as = sum(b*thetahat))
   theta_bs <- theta_b_use %>%
     gather(est, thetahat) %>%
     inner_join(bhat_a) %>%
-    filter(!shrunk) %>%
     group_by(theta_0) %>%
     summarise(theta_bs = sum(b*thetahat))
   theta_as %>%
