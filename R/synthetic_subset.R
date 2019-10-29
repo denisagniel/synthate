@@ -87,7 +87,7 @@
 synthetic_subset <- function(theta, boot, estimators = NULL, ...) {
   if (!is.null(estimators)) {
     theta_use <- select(theta, one_of(estimators))
-    boot_use <- select(boot_theta, one_of(estimators))
+    boot_use <- select(boot, one_of(estimators))
     boot_use <- as.matrix(boot_use)
   } else {
     theta_use <- theta
