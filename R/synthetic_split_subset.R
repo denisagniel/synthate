@@ -98,10 +98,10 @@ synthetic_split_subset <- function(thetahat_a, thetahat_b, boot, estimators = NU
   }
   # browser()
   comb_a <- combine_estimators(ests = theta_a_use,
-                             boot_ests = boot_use,
+                             boot_ests = 2*boot_use,
                              ...)
   comb_b <- combine_estimators(ests = theta_b_use,
-                               boot_ests = boot_use,
+                               boot_ests = 2*boot_use,
                                ...)
   bhat_a <- comb_a$b_res
   bhat_b <- comb_b$b_res
