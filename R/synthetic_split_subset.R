@@ -86,6 +86,7 @@
 #'     
 #'     
 synthetic_split_subset <- function(thetahat_a, thetahat_b, boot, estimators = NULL, ...) {
+  estimators <- unlist(estimators)
   if (!is.null(estimators)) {
     theta_a_use <- select(thetahat_a, one_of(estimators))
     theta_b_use <- select(thetahat_b, one_of(estimators))

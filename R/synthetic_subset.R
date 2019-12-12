@@ -85,6 +85,7 @@
 #'     
 #'     
 synthetic_subset <- function(theta, boot, estimators = NULL, ...) {
+  estimators <- unlist(estimators)
   if (!is.null(estimators)) {
     theta_use <- select(theta, one_of(estimators))
     boot_use <- select(boot, one_of(estimators))
