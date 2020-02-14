@@ -1,4 +1,23 @@
-do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, is_cv = FALSE, bias_type = 'raw_diff', boot_mean = NULL, ate_0 = NULL, n = NULL) {
+#' Workhorse function for creating a synthetic estimator by combining multiple candidate estimators.
+#'
+#' Creates a synthetic estimator by minimizing the (estimated) mean squared error of a linear combination of multiple candidate estimators.
+#'
+#' @param ests one-row, p-column data frame of estimators.
+#' @param name_0 character value of the name of the presumed unbiased estimator, \eqn{\theta_0}. Default is NULL, which returns results for using each candidate estimator as \eqn{\theta_0}, one synthetic estimator for each. If \code{ate_0} is given, then it is used as \eqn{\theta_0} in place of this.
+#' @param C p x p covariance matrix of \code{ests}.
+#' @param print logical indicating whether details should be printed. Default is FALSE.
+#' @param exclude_t0 logical indicating whether \eqn{\theta_0} should be considered an external estimator (not a candidate for combining with others). Default is FALSE.
+#' @param bias_type method to compute the bias in the mean squard error. Default is \code{raw_diff}, which computes the bias as the raw difference between each of the candidate estimator and \eqn{\theta_0}. Other options to compute the bias include: \code{bootstrap} which computes the bias as the difference between the mean of the bootstrap samples and the observed value of \eqn{\theta_0}; \code{bootstrap_all} which computes the bias as the mean of the difference between the bootstrapped version of the candidate estimator and the bootstrapped version of \eqn{\theta_0}; \code{none} which assumes no bias; \code{shrunk} which computes the bias as the raw difference divided by \code{n}. 
+#' @param boot_mean mean of bootstrap samples for bootstrap-based bias estimation.
+#' @param ate_0 external value of \eqn{\theta_0}. Default is NULL, in which case \eqn{\theta_0} is taken to be \code{name_0}. 
+#' @param n sample size. Default is NULL. Needed only if \code{bias_type} is \code{shrunk}.
+#'
+#' @return list of three objects, including \code{ate_res} which gives results for the synthetic estimator, \code{b_res} which gives results for how the estimators were combined, and \code{C} which gives the covariance matrix of the estimators. 
+#' 
+#' @import dplyr
+#' @importFrom 
+
+do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, bias_type = 'raw_diff', boot_mean = NULL, ate_0 = NULL, n = NULL) {
   # browser()
   est_0 <- ests %>% select_(name_0) %>% unlist
   i_0 <- which(colnames(ests) == name_0)

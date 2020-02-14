@@ -13,6 +13,11 @@
 #' @param n sample size. Default is NULL. Needed only if \code{bias_type} is \code{shrunk}.
 #'
 #' @return list of three objects, including \code{ate_res} which gives results for the synthetic estimator, \code{b_res} which gives results for how the estimators were combined, and \code{C} which gives the covariance matrix of the estimators. 
+#' 
+#' @import dplyr
+#' @importFrom purrr simplify map
+#' @importFrom matrixcalc is.positive.definite
+#' @importFrom Matrix nearPD
 #'
 #' @examples
 #'

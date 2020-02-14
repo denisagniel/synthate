@@ -6,6 +6,7 @@
 #'
 #' @return list of objects from quadprog::solve.QP
 #' @importFrom matrixcalc is.positive.definite
+#' @importFrom Matrix nearPD
 #' @importFrom quadprog solve.QP
 #'
 #' @examples
