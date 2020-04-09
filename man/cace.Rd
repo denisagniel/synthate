@@ -15,6 +15,8 @@
 \alias{pps_fn}
 \alias{ipw_fn}
 \alias{ipw_regr_fn}
+\alias{ipws_fn}
+\alias{ipwrs_fn}
 \alias{get_weighted_y_c}
 \title{Functions to estimate the complier average causal effect or local average treatment effect}
 \usage{
@@ -28,13 +30,13 @@ at_fn(ds)
 
 pp_fn(ds)
 
-tsls_fn(ds)
+tsls_fn(ds, sfm = NULL, yfm = NULL)
 
 itt_regr_fn(ds)
 
-atregr_fn(ds)
+atregr_fn(ds, fm = NULL)
 
-ppregr_fn(ds)
+ppregr_fn(ds, fm = fm)
 
 ivs_fn(ds)
 
@@ -42,9 +44,13 @@ ats_fn(ds)
 
 pps_fn(ds)
 
-ipw_fn(ds)
+ipw_fn(ds, p = NULL)
 
-ipw_regr_fn(ds)
+ipw_regr_fn(ds, p = NULL)
+
+ipws_fn(ds, p = NULL)
+
+ipwrs_fn(ds, p = NULL)
 
 get_weighted_y_c(Z, D, X, Y)
 }

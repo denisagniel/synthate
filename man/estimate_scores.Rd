@@ -4,8 +4,14 @@
 \alias{estimate_scores}
 \title{Estimate propensity and prognostic scores.}
 \usage{
-estimate_scores(this_data, outcome_fm, outcome_fam = gaussian, ps_fm,
-  ps_fam = binomial, wt = NULL)
+estimate_scores(
+  this_data,
+  outcome_fm,
+  outcome_fam = gaussian,
+  ps_fm,
+  ps_fam = binomial,
+  wt = NULL
+)
 }
 \arguments{
 \item{this_data}{data frame to estimate scores on.}

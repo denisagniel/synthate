@@ -4,10 +4,19 @@
 \alias{generate_data_sj}
 \title{Generate data for compliance using the Stuart and Jo model.}
 \usage{
-generate_data_sj(n, gamma_c = 0.5, compliance_p = 0.5,
-  compliance_effect = 0.5, alpha_c = 1, alpha_n = 0.5,
-  lambda_c = 1, lambda_n = 1, gamma_n = 0, sigma_c = 1,
-  sigma_n = 1)
+generate_data_sj(
+  n,
+  gamma_c = 0.5,
+  compliance_p = 0.5,
+  compliance_effect = 0.5,
+  alpha_c = 1,
+  alpha_n = 0.5,
+  lambda_c = 1,
+  lambda_n = 1,
+  gamma_n = 0,
+  sigma_c = 1,
+  sigma_n = 1
+)
 }
 \arguments{
 \item{gamma_c}{effect of randomization among the compliers}
