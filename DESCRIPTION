@@ -10,5 +10,25 @@ Description: Creating robust causal effect estimators for the average treatment
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
-
+RoxygenNote: 7.1.0
+Imports: 
+    dplyr,
+    mvnfast,
+    stringr,
+    matrixcalc,
+    quadprog,
+    ATE,
+    Matching,
+    Matrix,
+    grf,
+    magrittr,
+    mgcv,
+    purrr,
+    randomForest,
+    rpart,
+    survey,
+    tibble,
+    tidyr,
+    withr,
+    stats,
+    utils
