@@ -108,16 +108,16 @@ combine_estimators <- function(ests,
                      n = n)
       })
     synth_ates <- map(synths, 'synthetic_ate') %>% unlist
-    # shrunk_ates <- map(synths, 'shrunk_ate') %>% unlist
+    shrunk_ates <- map(synths, 'shrunk_ate') %>% unlist
     # synth_mse <- map(synths, 'naive_mse') %>% unlist
-    # shrunk_mse <- map(synths, 'shrunk_mse') %>% unlist
+    shrunk_mse <- map(synths, 'shrunk_mse') %>% unlist
     # synth_mse2 <- map(synths, 'naive_mse2') %>% unlist
     asymp_mse <- map(synths, 'asymp_mse') %>% unlist
     # shrunk_mse2 <- map(synths, 'shrunk_mse2') %>% unlist
     # thr_var <- map(synths, 'th_var') %>% unlist
 
     synth_b <- map(synths, 'b') %>% simplify
-    # shrunk_b <- map(synths, 'b_shrink') %>% simplify
+    shrunk_b <- map(synths, 'b_shrink') %>% simplify
     # shrinkage_facs <- map(synths, 'shrinkage_factor') %>% simplify
 
     ate_res <- 
@@ -125,7 +125,16 @@ combine_estimators <- function(ests,
           ate = synth_ates,
           theta_0 = est_names,
           synthetic = TRUE,
-          var = asymp_mse)
+          shrunk = FALSE,
+          var = asymp_mse) %>%
+      full_join(
+        data.frame(
+          ate = shrunk_ates,
+          theta_0 = est_names,
+          synthetic = TRUE,
+          shrunk = TRUE,
+          var = shrunk_mse)
+      )
     # browser()
     en_mat <- matrix(est_names, length(est_names), length(est_names))
     if (exclude_t0) {
@@ -138,8 +147,15 @@ combine_estimators <- function(ests,
     b_res <- data.frame(
           b = synth_b,
           est = use_names,
-          theta_0 = rep(est_names, each = ln)
-    )
+          theta_0 = rep(est_names, each = ln),
+          shrunk = FALSE
+    ) %>%
+      full_join(data.frame(
+        b = shrunk_b,
+        est = use_names,
+        theta_0 = rep(est_names, each = ln),
+        shrunk = TRUE
+      ))
   } else {
     comb <- do_combination(ests = rm_ests, name_0 = name_0, C = C, 
                            exclude_t0 = exclude_t0, bias_type = bias_type,
