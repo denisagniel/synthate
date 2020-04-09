@@ -15,7 +15,6 @@
 #' @return list of three objects, including \code{ate_res} which gives results for the synthetic estimator, \code{b_res} which gives results for how the estimators were combined, and \code{C} which gives the covariance matrix of the estimators. 
 #' 
 #' @import dplyr
-#' @importFrom 
 
 do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, bias_type = 'raw_diff', boot_mean = NULL, ate_0 = NULL, n = NULL) {
   # browser()
@@ -65,28 +64,28 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, b
   
   #-------------------------
   # adjusted differences
-  # w <- B
-  # w[-i_0] <- B[-i_0]^2/(v_0 + v - 2*r + B[-i_0]^2)
-  # Btilde <- B*w
-  # qqtilde <- C + Btilde %*% t(Btilde)
-  # qqt_adj <- qqtilde/norm(qqtilde, '2')
-  # shrinkage_soln <- qp(qqt_adj, n_ests)
+  w <- B
+  w[-i_0] <- B[-i_0]^2/(v_0 + v - 2*r + B[-i_0]^2)
+  Btilde <- B*w
+  qqtilde <- C + Btilde %*% t(Btilde)
+  qqt_adj <- qqtilde/norm(qqtilde, '2')
+  shrinkage_soln <- qp(qqt_adj, n_ests)
   
   msehat <- asymptotic_mse(V_0 = v_0,
                            V = C[-i_0,-i_0],
                            C = r,
                            deltahat = B[-i_0])
-  # shrunk_msehat <- asymptotic_mse(V_0 = v_0,
-                           # V = C[-i_0,-i_0],
-                           # C = r,
-                           # deltahat = Btilde[-i_0])
+  shrunk_msehat <- asymptotic_mse(V_0 = v_0,
+  V = C[-i_0,-i_0],
+  C = r,
+  deltahat = Btilde[-i_0])
   
   
   if (print) print(convex_soln)
   b_convex <- convex_soln$solution
   convex_ate <- unlist(ests) %*% b_convex
-  # b_shrink <- shrinkage_soln$solution
-  # shrunk_ate <- unlist(ests) %*% b_shrink
+  b_shrink <- shrinkage_soln$solution
+  shrunk_ate <- unlist(ests) %*% b_shrink
   
   # r_mat <- matrix(r, n_ests-1, n_ests-1)
   # pn <- v_0 - r
@@ -122,14 +121,14 @@ do_combination <- function(ests, name_0, C, print = FALSE, exclude_t0 = FALSE, b
   # shrunk_mse2 <- (sqrt(shrunk_var) + 1/2*abs(t(b_shrink) %*% B))^2
   list(b = b_convex, 
        synthetic_ate = convex_ate, 
-       # b_shrink = b_shrink,
-       # shrunk_ate = shrunk_ate, 
+       b_shrink = b_shrink,
+       shrunk_ate = shrunk_ate,
        # shrinkage_factor = w,
        # naive_var = naive_var, 
        # naive_mse = naive_mse,
        # naive_mse2 = naive_mse2,
-       asymp_mse = msehat
-       # shrunk_mse = shrunk_msehat
+       asymp_mse = msehat,
+       shrunk_mse = shrunk_msehat
        # shrunk_var = shrunk_var, 
        # shrunk_mse = shrunk_mse,
        # shrunk_mse2 = shrunk_mse2,
